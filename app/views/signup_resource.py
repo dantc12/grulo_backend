@@ -11,6 +11,8 @@ class SignUp(Resource):
         parser.add_argument('password', required=True)
         parser.add_argument('email', required=True)
         parser.add_argument('address', required=True)
+        parser.add_argument('firstname')
+        parser.add_argument('lastname')
         parser.add_argument('birthday')
         parser.add_argument('phone')
         parser.add_argument('gender')
@@ -22,6 +24,8 @@ class SignUp(Resource):
             password=args.get('password'),
             email=args.get('email'),
             address=args.get('address'),
+            firstname=args.get('firstname') if args.get('firstname') else None,
+            lastname=args.get('lastname') if args.get('lastname') else None,
             birthday=args.get('birthday') if args.get('birthday') else None,
             phone=args.get('phone') if args.get('phone') else None,
             gender=args.get('gender') if args.get('gender') else None,
