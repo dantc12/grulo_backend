@@ -2,6 +2,7 @@ from app.views.is_alive import IsAlive
 from app.views.login_resource import Login
 from app.views.posts_resource import PostsResource
 from app.views.signup_resource import SignUp
+from app.views.groups_resource import GetByCoor
 
 api_resources = [
     {
@@ -19,5 +20,9 @@ api_resources = [
     {
         "name": PostsResource,
         "path": '/posts'
+    },
+    {
+        "name": GetByCoor,
+        "path": '/groups/getByCoor'
     }
 ]
