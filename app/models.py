@@ -1,5 +1,4 @@
 import datetime
-import json
 from mongoengine import Document
 from mongoengine import (
     DateTimeField,
@@ -27,7 +26,7 @@ class User(Document):
             "user_name": self.user_name,
             "email": self.email,
             "password": self.password,
-            "address": self.password,
+            "address": self.address,
             "birthday": str(self.birthday),
             "phone": self.phone,
             "gender": self.gender,

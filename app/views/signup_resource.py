@@ -1,10 +1,11 @@
 from flask_restful import Resource, reqparse
+from mongoengine import NotUniqueError, ValidationError
+
 from app.models import User
-import json
 
 
 class SignUp(Resource):
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True)
         parser.add_argument('password', required=True)
@@ -20,13 +21,19 @@ class SignUp(Resource):
             user_name=args.get('username'),
             password=args.get('password'),
             email=args.get('email'),
-            address=args.get('address')
-            # birthday=args.get('birthday') if args.get('birthday') else "",
-            # phone=args.get('phone') if args.get('phone') else "",
-            # gender=args.get('gender') if args.get('gender') else "",
-            # bio=args.get('bio') if args.get('bio') else ""
+            address=args.get('address'),
+            birthday=args.get('birthday') if args.get('birthday') else None,
+            phone=args.get('phone') if args.get('phone') else None,
+            gender=args.get('gender') if args.get('gender') else None,
+            bio=args.get('bio') if args.get('bio') else None
         )
-        u.save()
-        print(str(User.objects.get(user_name='dan')))
-
-        return u.json(), 200
+        try:
+            u.save()
+        except ValidationError:
+            return {"message": "Bad input."}, 500
+        except NotUniqueError:
+            return {"message": "User already exists."}, 500
+        else:
+            response = {"message": "User created successfully."}
+            response.update(u.json())
+            return response, 200
