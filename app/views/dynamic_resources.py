@@ -45,7 +45,7 @@ class UserByName(Resource):
         _ = parser.parse_args()
 
         try:
-            u = Users.objects.get(groupid=username)
+            u = Users.objects.get(username=username)
         except DoesNotExist:
             return {"message": "User doesn't exist."}, 500
         else:
