@@ -1,7 +1,7 @@
 from app.views.is_alive import IsAlive
 from app.views.login_resource import Login
 from app.views.logout_resource import Logout
-from app.views.posts_creator_resource import PostsResource
+from app.views.posts_resource import PostsResource
 from app.views.dynamic_resources import PostById, GroupById, UserByName
 from app.views.signup_resource import SignUp
 from app.views.groups_resource import GetGroupByCoor, AddUserToGroup, GetAllGroups
