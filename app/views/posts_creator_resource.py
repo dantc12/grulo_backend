@@ -7,7 +7,7 @@ from app.models.users_model import Users
 from app.sessions_ids import sessions_ids
 
 
-class PostCreator(Resource):
+class PostsResource(Resource):
     def post(self):  # create new post
         parser = reqparse.RequestParser()
         parser.add_argument('session_id', required=True)
@@ -45,4 +45,23 @@ class PostCreator(Resource):
             g.update(postids=g.postids + [next_post_id])
             response = {"message": "Post created successfully."}
             response.update(p.json())
+            return response, 200
+
+    def get(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument('session_id', required=True)
+        args = parser.parse_args()
+
+        session_id = args.get('session_id')
+        username = sessions_ids.get(session_id)
+        u = Users.objects.get(username=username)
+        posts = []
+        for group_id in u.group_ids:
+            g = Groups.objects.get(groupid=group_id)
+            posts += [Posts.objects.get(post_id=post_id) for post_id in g.postids]
+        if len(posts) == 0:
+            return {"message": "No posts to show."}, 200
+        else:
+            response = {"message": "Found posts to show."}
+            response.update({"posts": [p.json() for p in posts]})
             return response, 200
