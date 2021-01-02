@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from app.models.groups_model import Groups
+from app.models.users_model import Users
 from mongoengine import NotUniqueError, ValidationError, DoesNotExist
 import requests
 import json
@@ -28,6 +29,17 @@ class GetByCoor(Resource):
 
 class AddUser(Resource):
     def post(self):
+        def add_group_to_user(username, groupid):
+            user = Users.objects.get(username=username)
+            user_groups = user.group_ids
+            user_groups.append(groupid)
+            Users.objects(username=username).update(group_ids=user_groups)
+            
+            response = {"message": "User added successfully.", "username": username, "groupid": groupid}
+            return response, 200
+
+
+
         ##### TODO: Check if group exist by groupid, If exists add user to group
 
         parser = reqparse.RequestParser()
@@ -64,9 +76,7 @@ class AddUser(Resource):
                 print(e)
                 return {"message": "User already exists."}, 500
             else:
-                response = {"message": "User added successfully."}
-                response.update(g.json())
-                return response, 200
+                return add_group_to_user(sessions_ids[args.get('session_id')], args.get('groupid'))
 
         except ValidationError:
             return {"message": "Bad input."}, 500
@@ -74,6 +84,9 @@ class AddUser(Resource):
             print(e)
             return {"message": "User already exists."}, 500
         else:
-            response = {"message": "Group created successfully."}
-            response.update(group.json())
-            return response, 200
+            return add_group_to_user(sessions_ids[args.get('session_id')], args.get('groupid'))
+
+class GetGroups(Resource):
+    def get(self):
+        groups = Groups.objects()
+        return json.loads(groups.to_json()), 200
