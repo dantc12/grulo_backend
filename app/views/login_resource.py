@@ -2,7 +2,7 @@ from flask_restful import Resource, reqparse
 
 
 class Login(Resource):
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('username', required=True)
         parser.add_argument('password', required=True)
