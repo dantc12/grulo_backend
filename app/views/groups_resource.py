@@ -27,6 +27,7 @@ class GetByCoor(Resource):
 
         return loc_response, 200
 
+
 class AddUser(Resource):
     def post(self):
         def add_group_to_user(username, groupid):
@@ -37,10 +38,6 @@ class AddUser(Resource):
             
             response = {"message": "User added successfully.", "username": username, "groupid": groupid}
             return response, 200
-
-
-
-        ##### TODO: Check if group exist by groupid, If exists add user to group
 
         parser = reqparse.RequestParser()
         parser.add_argument('groupname', required=True)
@@ -60,7 +57,6 @@ class AddUser(Resource):
             print("added")
             
         except DoesNotExist:
-
             # If new group
             g = Groups(
                 groupname=args.get('groupname'),
@@ -85,6 +81,7 @@ class AddUser(Resource):
             return {"message": "User already exists."}, 500
         else:
             return add_group_to_user(sessions_ids[args.get('session_id')], args.get('groupid'))
+
 
 class GetGroups(Resource):
     def get(self):

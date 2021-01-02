@@ -1,16 +1,10 @@
-import datetime
 from mongoengine import Document
 from mongoengine import (
-    #DateTimeField,
     StringField,
     ListField,
     IntField,
-    #EmailField,
-    # ReferenceField,
-    # ListField,
-    # FileField,
-    # ImageField,
 )
+
 
 class Groups(Document):
     groupname = StringField(max_length=100, required=True)
@@ -19,7 +13,6 @@ class Groups(Document):
     users = ListField(StringField(), default=["noam"], required=True)
     postids = ListField(IntField())
 
-
     def json(self):
         group_dict = {
             "groupname": self.groupname,
@@ -27,7 +20,6 @@ class Groups(Document):
             "groupid": self.groupid,
             "users": self.users
         }
-
         return group_dict
 
     def __str__(self):
