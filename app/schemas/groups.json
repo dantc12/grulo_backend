@@ -1,0 +1,8 @@
+{
+  "groupname": "string (UNIQUE)",
+  "grouptype": "building|street|neighborhood|city|country",
+  "userids": "list",
+  "location": "coordinates",
+  "postids": "list",
+  "token": "string"
+}
