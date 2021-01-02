@@ -21,7 +21,7 @@ class Login(Resource):
             return {"message": "User or password are incorrect."}, 500
         else:
             if u["password"] == args.get('password'):
-                for session_id, username in sessions_ids:
+                for session_id, username in sessions_ids.items():
                     if u.username == username:
                         return {"message": "Login successful.",
                                 "session_id": session_id}, 200
