@@ -5,7 +5,6 @@ from flask_restful import Resource, reqparse
 
 from app.models.groups_model import Groups
 
-
 class SearchGroup(Resource):
     def get(self):
         parser = reqparse.RequestParser()
