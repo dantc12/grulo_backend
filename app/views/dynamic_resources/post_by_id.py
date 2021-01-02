@@ -18,3 +18,17 @@ class PostById(Resource):
             response = {"message": "Found post successfully."}
             response.update(p.json())
             return response, 200
+
+    def post(self, post_id):  # add a comment
+        parser = reqparse.RequestParser()
+        parser.add_argument('session_id', required=True)
+        _ = parser.parse_args()
+
+        try:
+            p = Posts.objects.get(post_id=post_id)
+        except DoesNotExist:
+            return {"message": "Post doesn't exist."}, 500
+        else:
+            response = {"message": "Found post successfully."}
+            response.update(p.json())
+            return response, 200

@@ -1,12 +1,14 @@
-from app.views.is_alive import IsAlive
-from app.views.login_resource import Login
-from app.views.logout_resource import Logout
+from app.views.authentication.is_alive import IsAlive
+from app.views.authentication.login_resource import Login
+from app.views.authentication.logout_resource import Logout
 from app.views.posts_resource import PostsResource
-from app.views.dynamic_resources.dynamic_resources import PostById
+from app.views.dynamic_resources.post_by_id import PostById
 from app.views.dynamic_resources.users_by_name import UserByName
 from app.views.dynamic_resources.groups_by_id import GroupById
-from app.views.signup_resource import SignUp
-from app.views.groups_resource import GetGroupByCoor, AddUserToGroup, GetAllGroups, SearchGroup
+from app.views.authentication.signup_resource import SignUp
+from app.views.groups_resources.groups_resource import AddUserToGroup, GetAllGroups
+from app.views.groups_resources.search_groups import SearchGroup
+from app.views.groups_resources.group_by_coor import GetGroupByCoor
 
 api_resources = [
     {

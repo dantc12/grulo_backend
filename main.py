@@ -2,7 +2,7 @@ from flask import Flask
 from flask_restful import Api
 from mongoengine import connect
 
-from app.views.api_resources import api_resources
+from app.api_resources import api_resources
 
 grulo_app = Flask(__name__)
 grulo_api = Api(grulo_app)
