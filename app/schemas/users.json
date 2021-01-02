@@ -1,0 +1,14 @@
+{
+    "user_name": "string",
+    "email": "string (EmailField)",
+    "password": "string",
+    "address": "string",
+    "first_name": "string",
+    "last_name": "string",
+    "birthday": "date",
+    "phone": "int",
+    "gender": "string",
+    "bio": "string",
+    "group_ids": "list",
+    "post_ids": "list"
+}

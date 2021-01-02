@@ -1,4 +1,6 @@
 from flask_restful import Resource, reqparse
+from mongoengine import DoesNotExist
+
 from app.models.users_model import Users
 import os
 import binascii
@@ -13,18 +15,15 @@ class Login(Resource):
         parser.add_argument('password', required=True)
         args = parser.parse_args()  # parse arguments to dictionary
 
-        # print(Users.objects.get(username=args.get('username'))["password"])
-
-        if Users.objects.get(username=args.get('username')) and \
-                Users.objects.get(username=args.get('username'))["password"] == args.get('password'):
-            session_id = str(binascii.hexlify(os.urandom(24)).decode('ascii'))
-            sessions_ids[session_id] = args.get('username')
-            # with open('sessions_ids.py') as json_file:
-            #     sessions_data = json.load(json_file)
-            #
-            # with open('sessions_ids.py', 'w') as outfile:
-            #     sessions_data[args.get('username')] = session_id
-            #     json.dump(sessions_data, outfile)
-            return {"session_id": session_id}, 200
+        try:
+            u = Users.objects.get(username=args.get('username'))
+        except DoesNotExist:
+            return {"message": "User or password are incorrect."}, 500
         else:
-            return "Password is incorrect", 403
+            if u["password"] == args.get('password'):
+                session_id = str(binascii.hexlify(os.urandom(24)).decode('ascii'))
+                sessions_ids[session_id] = args.get('username')
+                return {"message": "Login successful.",
+                        "session_id": session_id}, 200
+            else:
+                return {"message": "User or password are incorrect."}, 500
