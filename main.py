@@ -1,10 +1,13 @@
 from flask import Flask
-from flask_restful import Resource, Api, reqparse
+from flask_restful import Api
+from mongoengine import connect
 
 from app.views.api_resources import api_resources
 
 grulo_app = Flask(__name__)
 grulo_api = Api(grulo_app)
+
+connect(host="20.196.3.185:27017", db="grulo")
 
 for v in api_resources:
     grulo_api.add_resource(v.get('name'), v.get('path'))
