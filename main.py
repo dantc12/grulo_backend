@@ -11,4 +11,4 @@ for v in api_resources:
 
 
 if __name__ == "__main__":
-    grulo_app.run(host='0.0.0.0', port=443, debug=True)
+    grulo_app.run(host='0.0.0.0', port=80, debug=True)
