@@ -1,1 +1,24 @@
-grulo_backend
+An example of a FlaskApp directory:
+
+    /yourapp  
+        /run.py  
+        /config.py  
+        /app  
+            /__init__.py
+            /views.py  
+            /models.py  
+            /static/  
+                /main.css
+            /templates/  
+                /base.html  
+        /requirements.txt  
+        /yourappenv
+run.py - contains the actual python code that will import the app and start the development server.
+config.py - stores configurations for your app.
+__init__.py - initializes your application creating a Flask app instance.
+views.py - this is where routes are defined.
+models.py - this is where you define models for your application.
+static - contains static files i.e. CSS, Javascript, images
+templates - this is where you store your html templates i.e. index.html, layout.html
+requirements.txt - this is where you store your package dependancies, you can use pip
+yourappenv - your virtual environment for development
