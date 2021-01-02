@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from mongoengine import NotUniqueError, ValidationError
 
-from app.models import Users
+from app.models.users_model import Users
 
 
 class SignUp(Resource):

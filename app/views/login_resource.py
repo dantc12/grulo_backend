@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from app.models import Users
+from app.models.users_model import Users
 import os
 import json
 import binascii
