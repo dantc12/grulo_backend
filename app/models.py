@@ -11,8 +11,8 @@ from mongoengine import (
 )
 
 
-class User(Document):
-    user_name = StringField(max_length=60, required=True, unique=True)
+class Users(Document):
+    username = StringField(max_length=60, required=True, unique=True)
     email = EmailField(unique=True)
     password = StringField(max_length=60, required=True)
     address = StringField(max_length=60, required=True)
@@ -23,7 +23,7 @@ class User(Document):
 
     def json(self):
         user_dict = {
-            "user_name": self.user_name,
+            "username": self.username,
             "email": self.email,
             "password": self.password,
             "address": self.address,

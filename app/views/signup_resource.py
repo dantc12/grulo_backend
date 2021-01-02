@@ -1,7 +1,7 @@
 from flask_restful import Resource, reqparse
 from mongoengine import NotUniqueError, ValidationError
 
-from app.models import User
+from app.models import Users
 
 
 class SignUp(Resource):
@@ -17,8 +17,8 @@ class SignUp(Resource):
         parser.add_argument('bio')
         args = parser.parse_args()  # parse arguments to dictionary
 
-        u = User(
-            user_name=args.get('username'),
+        u = Users(
+            username=args.get('username'),
             password=args.get('password'),
             email=args.get('email'),
             address=args.get('address'),
@@ -31,7 +31,8 @@ class SignUp(Resource):
             u.save()
         except ValidationError:
             return {"message": "Bad input."}, 500
-        except NotUniqueError:
+        except NotUniqueError as e:
+            print(e)
             return {"message": "User already exists."}, 500
         else:
             response = {"message": "User created successfully."}
