@@ -47,9 +47,10 @@ class PostsResource(Resource):
             response.update(p.json())
             return response, 200
 
-    def get(self):
+    def get(self):  # get all relevant posts to user
         parser = reqparse.RequestParser()
         parser.add_argument('session_id', required=True)
+        parser.add_argument('limit')
         args = parser.parse_args()
 
         session_id = args.get('session_id')
@@ -63,5 +64,8 @@ class PostsResource(Resource):
             return {"message": "No posts to show."}, 200
         else:
             response = {"message": "Found posts to show."}
-            response.update({"posts": [p.json() for p in posts]})
+            if args['limit']:
+                response.update({"posts": [p.json() for p in posts[:int(args['limit'])]]})
+            else:
+                response.update({"posts": [p.json() for p in posts]})
             return response, 200
