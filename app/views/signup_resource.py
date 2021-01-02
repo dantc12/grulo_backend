@@ -1,5 +1,5 @@
 from flask_restful import Resource, reqparse
-from app.models import User
+from app.models import Users
 import json
 
 
@@ -16,8 +16,8 @@ class SignUp(Resource):
         parser.add_argument('bio')
         args = parser.parse_args()  # parse arguments to dictionary
 
-        u = User(
-            user_name=args.get('username'),
+        u = Users(
+            username=args.get('username'),
             password=args.get('password'),
             email=args.get('email'),
             address=args.get('address')
@@ -27,6 +27,6 @@ class SignUp(Resource):
             # bio=args.get('bio') if args.get('bio') else ""
         )
         u.save()
-        print(str(User.objects.get(user_name='dan')))
+        print(str(Users.objects.get(username='dan')))
 
         return u.json(), 200
