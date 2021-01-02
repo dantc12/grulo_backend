@@ -19,6 +19,8 @@ class Users(Document):
     phone = StringField(max_length=20)
     gender = StringField(max_length=20)
     bio = StringField(max_length=100)
+    group_ids = ListField(default=[])
+    post_ids = ListField(default=[])
 
     def json(self):
         user_dict = {
@@ -31,7 +33,9 @@ class Users(Document):
             "birthday": str(self.birthday),
             "phone": self.phone,
             "gender": self.gender,
-            "bio": self.bio
+            "bio": self.bio,
+            "group_ids": self.group_ids,
+            "post_ids": self.post_ids
         }
         return user_dict
 
