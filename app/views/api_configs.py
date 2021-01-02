@@ -1,1 +1,2 @@
-LOGIN_PAGE_PATH = '/login'
+IS_ALIVE_PATH = '/'
+LOGIN_PATH = '/login'
