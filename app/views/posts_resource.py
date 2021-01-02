@@ -18,7 +18,7 @@ class PostsResource(Resource):
         try:
             g = Groups.objects.get(groupname=args['groupname'])
         except DoesNotExist:
-            return {"message": "Group doesn't exist."}, 500
+            return {"message": "Group doesn't exist."}, 530
 
         #  create the post id
         post_ids = [post.post_id for post in Posts.objects]
@@ -34,7 +34,7 @@ class PostsResource(Resource):
         try:
             p.save()
         except ValidationError:
-            return {"message": "Bad input."}, 500
+            return {"message": "Bad input."}, 530
         else:
             #  add to user's posts
             session_id = args.get('session_id')
