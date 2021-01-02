@@ -7,7 +7,7 @@ import json
 from app.sessions_ids import sessions_ids
 
 
-class GetByCoor(Resource):
+class GetGroupByCoor(Resource):
     def get(self):
         parser = reqparse.RequestParser()
         parser.add_argument('coordinates', required=True)
@@ -28,7 +28,7 @@ class GetByCoor(Resource):
         return loc_response, 200
 
 
-class AddUser(Resource):
+class AddUserToGroup(Resource):
     def post(self):
         def add_group_to_user(username, groupid):
             user = Users.objects.get(username=username)
@@ -83,7 +83,7 @@ class AddUser(Resource):
             return add_group_to_user(sessions_ids[args.get('session_id')], args.get('groupid'))
 
 
-class GetGroups(Resource):
+class GetAllGroups(Resource):
     def get(self):
         groups = Groups.objects()
         return json.loads(groups.to_json()), 200

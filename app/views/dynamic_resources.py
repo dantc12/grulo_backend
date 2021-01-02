@@ -3,6 +3,7 @@ from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.models.posts_model import Posts
+from app.models.users_model import Users
 
 
 class PostById(Resource):
@@ -34,4 +35,20 @@ class GroupById(Resource):
         else:
             response = {"message": "Found group successfully."}
             response.update(g.json())
+            return response, 200
+
+
+class UserByName(Resource):
+    def get(self, username):
+        parser = reqparse.RequestParser()
+        parser.add_argument('session_id', required=True)
+        _ = parser.parse_args()
+
+        try:
+            u = Users.objects.get(groupid=username)
+        except DoesNotExist:
+            return {"message": "User doesn't exist."}, 500
+        else:
+            response = {"message": "Found user successfully."}
+            response.update(u.json())
             return response, 200
