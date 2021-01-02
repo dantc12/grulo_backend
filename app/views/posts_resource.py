@@ -2,6 +2,7 @@ from flask_restful import Resource, reqparse
 from mongoengine import NotUniqueError, ValidationError
 
 from app.models.posts_model import Posts
+from app.models.users_model import Users
 from app.sessions_ids import sessions_ids
 
 
@@ -15,6 +16,11 @@ class PostsResource(Resource):
 
         post_ids = [post.post_id for post in Posts.objects]
         next_post_id = max(post_ids) + 1
+
+        session_id = args.get('session_id')
+        username = sessions_ids.get(session_id)
+        u = Users.objects.get(username=username)
+        u.update(post_ids=u.post_ids + [next_post_id])
 
         p = Posts(
             post_id=next_post_id,
@@ -31,3 +37,12 @@ class PostsResource(Resource):
             response = {"message": "Post created successfully."}
             response.update(p.json())
             return response, 200
+    #
+    # def get(self):
+    #     parser = reqparse.RequestParser()
+    #     parser.add_argument('session_id', required=True)
+    #     args = parser.parse_args()
+    #
+    #     session_id = args.get('session_id')
+    #     username = sessions_ids.get(session_id)
+    #
