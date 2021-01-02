@@ -7,10 +7,10 @@ from app.views.api_resources import api_resources
 grulo_app = Flask(__name__)
 grulo_api = Api(grulo_app)
 
-connect(host="20.196.3.185:27017", db="grulo")
+connect(host="20.196.3.185:27018", db="grulo")
 
-for v in api_resources:
-    grulo_api.add_resource(v.get('name'), v.get('path'))
+for resource in api_resources:
+    grulo_api.add_resource(resource.get('name'), resource.get('path'))
 
 
 if __name__ == "__main__":
