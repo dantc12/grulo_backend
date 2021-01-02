@@ -1,5 +1,6 @@
 from app.views.is_alive import IsAlive
 from app.views.login_resource import Login
+from app.views.logout_resource import Logout
 from app.views.posts_creator_resource import PostCreator
 from app.views.dynamic_resources import PostById, GroupById, UserByName
 from app.views.signup_resource import SignUp
@@ -17,6 +18,10 @@ api_resources = [
     {
         "name": SignUp,
         "path": '/signup'
+    },
+    {
+        "name": Logout,
+        "path": '/logout'
     },
     {
         "name": PostCreator,
