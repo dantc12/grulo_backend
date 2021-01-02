@@ -4,7 +4,7 @@ from app.views.authentication.logout_resource import Logout
 from app.views.posts_resource import PostsResource
 from app.views.dynamic_resources.post_by_id import PostById
 from app.views.dynamic_resources.users_by_name import UserByName
-from app.views.dynamic_resources.groups_by_id import GroupById
+from app.views.dynamic_resources.groups_by_id import GroupById, AddUserToGroupById
 from app.views.authentication.signup_resource import SignUp
 from app.views.groups_resources.groups_resource import AddUserToGroup, GetAllGroups
 from app.views.groups_resources.search_groups import SearchGroup
@@ -58,5 +58,10 @@ api_resources = [
     {
         "name": UserByName,
         "path": '/users/<string:username>'
+    },
+    {
+        "name": AddUserToGroupById,
+        "path": '/groups/<string:groupid>'
+
     }
 ]
