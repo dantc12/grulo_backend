@@ -1,13 +1,14 @@
 from flask import Flask
-app = Flask(__name__)
+from flask_restful import Resource, Api, reqparse
 
+from app.views.api_resources import api_resources
 
-@app.route("/")
-def hello():
-    return "Hello World!"
+grulo_app = Flask(__name__)
+grulo_api = Api(grulo_app)
+
+for v in api_resources:
+    grulo_api.add_resource(v.get('name'), v.get('path'))
 
 
 if __name__ == "__main__":
-    app.run()
-
-# NOAM TEST
+    grulo_app.run()
