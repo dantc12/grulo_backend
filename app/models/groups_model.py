@@ -1,21 +1,17 @@
-import datetime
 from mongoengine import Document
 from mongoengine import (
-    #DateTimeField,
     StringField,
     ListField,
-    #EmailField,
-    # ReferenceField,
-    # ListField,
-    # FileField,
-    # ImageField,
+    IntField,
 )
+
 
 class Groups(Document):
     groupname = StringField(max_length=100, required=True)
     grouptype = StringField(max_length=100, required=True)
     groupid = StringField(max_length=100, required=True)
     users = ListField(StringField(), default=["noam"], required=True)
+    postids = ListField(IntField())
 
     def json(self):
         group_dict = {
@@ -24,7 +20,6 @@ class Groups(Document):
             "groupid": self.groupid,
             "users": self.users
         }
-
         return group_dict
 
     def __str__(self):

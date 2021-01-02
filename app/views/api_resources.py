@@ -3,7 +3,7 @@ from app.views.login_resource import Login
 from app.views.posts_creator_resource import PostCreator
 from app.views.dynamic_resources import PostById, GroupById
 from app.views.signup_resource import SignUp
-from app.views.groups_resource import GetByCoor, AddUser
+from app.views.groups_resource import GetByCoor, AddUser, GetGroups
 
 api_resources = [
     {
@@ -33,6 +33,10 @@ api_resources = [
     {
         "name": AddUser,
         "path": '/groups/AddUser'
+    },
+    {
+        "name": GetGroups,
+        "path": '/groups'
     },
     {
         "name": GroupById,

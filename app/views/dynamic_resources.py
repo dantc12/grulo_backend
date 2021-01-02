@@ -9,7 +9,7 @@ class PostById(Resource):
     def get(self, post_id):
         parser = reqparse.RequestParser()
         parser.add_argument('session_id', required=True)
-        args = parser.parse_args()
+        _ = parser.parse_args()
 
         try:
             p = Posts.objects.get(post_id=post_id)
@@ -25,7 +25,7 @@ class GroupById(Resource):
     def get(self, groupid):
         parser = reqparse.RequestParser()
         parser.add_argument('session_id', required=True)
-        args = parser.parse_args()
+        _ = parser.parse_args()
 
         try:
             g = Groups.objects.get(groupid=groupid)
