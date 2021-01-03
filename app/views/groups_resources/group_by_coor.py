@@ -8,7 +8,7 @@ from app.sessions_ids import sessions_ids
 
 
 class GetGroupByCoor(Resource):
-    def get(self):
+    def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('coordinates', required=True)
         parser.add_argument('session_id', required=True)
