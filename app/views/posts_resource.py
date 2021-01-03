@@ -58,7 +58,10 @@ class PostsResource(Resource):
         u = Users.objects.get(username=username)
         posts = []
         for group_id in u.group_ids:
-            g = Groups.objects.get(groupid=group_id)
+            try:
+                g = Groups.objects.get(groupid=group_id)
+            except DoesNotExist:
+                return {"message": "No groups for user."}, 523
             posts += [Posts.objects.get(post_id=post_id) for post_id in g.postids]
         if len(posts) == 0:
             return {"message": "No posts to show."}, 200
