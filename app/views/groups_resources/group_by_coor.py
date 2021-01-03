@@ -35,4 +35,4 @@ class GetGroupByCoor(Resource):
                 continue
             loc_response.append({"groupid": loc["place_id"], "groupname": loc["formatted_address"], "grouptype": loc["types"][0], "users": users})
 
-        return {loc_response}, 200
+        return {"data": loc_response}, 200
