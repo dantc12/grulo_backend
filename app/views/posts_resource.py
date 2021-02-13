@@ -67,7 +67,7 @@ class PostsResource(Resource):
             return {"message": "No posts to show."}, 200
         else:
             response = {"message": "Found posts to show."}
-            if args['limit']:
+            if args.get("limit"):
                 response.update({"posts": [p.json() for p in posts[:int(args['limit'])]]})
             else:
                 response.update({"posts": [p.json() for p in posts]})
