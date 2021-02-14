@@ -2,3 +2,5 @@ Flask
 mongoengine
 Flask-RESTful
 requests
+connexion
+connexion[swagger-ui]
