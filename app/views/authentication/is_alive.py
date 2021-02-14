@@ -1,6 +1,4 @@
-from flask_restful import Resource
-
-
-class IsAlive(Resource):
-    def get(self):
-        return "I'm alive bitch"
+def is_alive():
+    return {
+        "message": "Grulo server is alive bitch."
+    }, 200
