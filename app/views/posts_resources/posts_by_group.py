@@ -18,6 +18,6 @@ class PostsByGroupName(Resource):
             return {"message": "Group doesn't exist."}, 530
 
         return {
-            "message": "retrieved posts of group {}".format(g.groupname),
-            "posts": [Posts.objects.get(post_id=post_id) for post_id in g.postids]
+            "message": "retrieved posts of group {}".format(g.group_name),
+            "posts": [Posts.objects.get(post_id=post_id) for post_id in g.post_ids]
         }, 200

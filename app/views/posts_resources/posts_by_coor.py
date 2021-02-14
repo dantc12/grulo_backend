@@ -22,7 +22,7 @@ class GetPostsByCoor(Resource):
             except DoesNotExist:
                 raise Exception("Issue with getting google group from grulo groups db.")
 
-            group_posts = [Posts.objects.get(post_id=post_id) for post_id in group.postids]
+            group_posts = [Posts.objects.get(post_id=post_id) for post_id in group.post_ids]
             res_posts += group_posts
 
         return {
