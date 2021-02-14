@@ -1,6 +1,7 @@
 from app.views.authentication.is_alive import IsAlive
 from app.views.authentication.login_resource import Login
 from app.views.authentication.logout_resource import Logout
+from app.views.posts_resources.posts_by_group import PostsByGroupName
 from app.views.posts_resources.posts_resource import PostsResource
 from app.views.dynamic_resources.post_by_id import PostById
 from app.views.dynamic_resources.users_by_name import UserByName
@@ -58,6 +59,9 @@ api_resources = [
     {
         "name": AddUserToGroupById,
         "path": '/groups/<string:groupid>'
-
+    },
+    {
+        "name": PostsByGroupName,
+        "path": '/posts/get_by_groupname'
     }
 ]
