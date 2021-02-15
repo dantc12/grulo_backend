@@ -26,7 +26,6 @@ class Users(Document):
         user_dict = {
             "user_name": self.user_name,
             "email": self.email,
-            "password": self.password,
             "address": self.address,
             "first_name": self.first_name,
             "last_name": self.last_name,
