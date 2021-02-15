@@ -14,25 +14,26 @@ def get_groups_by_coor(session_id: str, coordinates: str):
         locs = get_google_maps_coors(coordinates)
     except:
         return {
-                   "message": "Couldn't couldn't contact google API"
+                   "message": "Couldn't contact google API"
                }, 401
 
-    groups_res = []
+    group_options = []
     for loc in locs:
         try:
             group = Groups.objects.get(group_id=loc["place_id"])
         except DoesNotExist:
-            return {
-                       "message": "Issue with getting google group from grulo groups db."
-                   }, 401
-        users = group.users
+            group = None
+            group_user_names = []
+        else:
+            group_user_names = group.user_names
         user_name = sessions_ids[session_id]
-        if user_name not in [u.user_name for u in users]:
-            groups_res.append({
-                "group_id": loc["place_id"],
-                "group_name": loc["formatted_address"],
-                "group_type": loc["types"][0],
-                "users": users
-            })
-
-    return groups_res, 200
+        if user_name not in group_user_names:
+            if group:
+                group_options.append(group.json())
+            else:
+                group_options.append({
+                    "group_id": loc["place_id"],
+                    "group_name": loc["formatted_address"],
+                    "group_type": loc["types"][0]
+                })
+    return group_options, 200
