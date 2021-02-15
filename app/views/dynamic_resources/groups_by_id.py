@@ -40,7 +40,7 @@ class AddUserToGroupById(Resource):
 
         try:
             group = Groups.objects.get(groupid=groupid)
-            group_users = group.users
+            group_users = group.user_names
             if sessions_ids[args.get('session_id')] in group_users:
                 return {"message": "User already in group."}, 500
             group_users.append(sessions_ids[args.get('session_id')])

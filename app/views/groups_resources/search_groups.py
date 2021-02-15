@@ -24,7 +24,7 @@ class SearchGroup(Resource):
         for result in search_results["results"]:
             try:
                 group = Groups.objects.get(groupid=result["place_id"])
-                users = group.users
+                users = group.user_names
 
             except:
                 users = []
@@ -56,7 +56,7 @@ class SearchGroup(Resource):
                 for result_sub in search_results_sub["results"]:
                     try:
                         group = Groups.objects.get(groupid=result_sub["place_id"])
-                        users = group.users
+                        users = group.user_names
 
                     except:
                         users = []
