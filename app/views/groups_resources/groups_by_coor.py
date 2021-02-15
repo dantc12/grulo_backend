@@ -6,12 +6,16 @@ from app.utils import get_google_maps_coors
 
 
 def get_groups_by_coor(session_id: str, coordinates: str):
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+               }, 400
     try:
         locs = get_google_maps_coors(coordinates)
     except:
         return {
-            "message": "Couldn't couldn't contact google API"
-        }, 400
+                   "message": "Couldn't couldn't contact google API"
+               }, 401
 
     groups_res = []
     for loc in locs:
@@ -19,15 +23,16 @@ def get_groups_by_coor(session_id: str, coordinates: str):
             group = Groups.objects.get(group_id=loc["place_id"])
         except DoesNotExist:
             return {
-                "message": "Issue with getting google group from grulo groups db."
-            }, 400
+                       "message": "Issue with getting google group from grulo groups db."
+                   }, 401
         users = group.users
         user_name = sessions_ids[session_id]
         if user_name not in [u.user_name for u in users]:
             groups_res.append({
                 "group_id": loc["place_id"],
                 "group_name": loc["formatted_address"],
-                "group_type": loc["types"][0]
+                "group_type": loc["types"][0],
+                "users": users
             })
 
     return groups_res, 200

@@ -10,6 +10,8 @@ from app.sessions_ids import sessions_ids
 
 def create_post(body: Dict):
     session_id = body.get("session_id")
+    if session_id not in sessions_ids.keys():
+        return {"message": "Not logged in."}, 500
     group_name = body.get("group_name")
     text = body.get("text")
 
@@ -43,6 +45,10 @@ def create_post(body: Dict):
 
 def get_posts_for_user(session_id: str, limit: int = None):
     user_name = sessions_ids.get(session_id)
+    if not user_name:
+        return {
+            "message": "not logged in"
+        }, 400
     user = Users.objects.get(user_name=user_name)
     posts = []
     for group_id in user.group_ids:
