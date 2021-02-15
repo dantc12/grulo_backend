@@ -1,83 +1,57 @@
-from flask_restful import Resource, reqparse
-from mongoengine import DoesNotExist
 from app.sessions_ids import sessions_ids
 from app.models.users_model import Users
-import json
-import requests
 from app.models.groups_model import Groups
 from mongoengine import NotUniqueError, ValidationError, DoesNotExist
 
+from app.utils import get_google_maps_group
 
-class GroupById(Resource):
-    def get(self, groupid):
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        _ = parser.parse_args()
 
+def get_group_by_id(group_id: str, session_id: str):
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+               }, 400
+    try:
+        group = Groups.objects.get(group_id=group_id)
+    except DoesNotExist:
+        return {"message": "Group doesn't exist."}, 500
+    else:
+        return group.json(), 200
+
+
+def add_user_to_group(group_id: str, session_id: str):
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+               }, 400
+    user_name = sessions_ids[session_id]
+
+    user = Users.objects.get(user_name=user_name)
+    user_group_ids = user.group_ids
+    user_group_ids.append(group_id)
+    Users.objects(user_name=user_name).update(group_ids=user_group_ids)
+
+    try:
+        group = Groups.objects.get(group_id=group_id)
+        group_user_names = group.user_names
+        if user_name in group_user_names:
+            return {"message": "User already in group."}, 500
+        group_user_names.append(user_name)
+        Groups.objects(group_id=group_id).update(user_names=group_user_names)
+    except DoesNotExist:
+        # If new group
+        group_name, group_type = get_google_maps_group(group_id)
+        group = Groups(
+            group_name=group_name,
+            group_type=group_type,
+            group_id=group_id,
+            user_names=[user_name]
+        )
         try:
-            g = Groups.objects.get(groupid=groupid)
-        except DoesNotExist:
-            return {"message": "Group doesn't exist."}, 500
-        else:
-            response = {"message": "Found group successfully."}
-            response.update(g.json())
-            return response, 200
-
-class AddUserToGroupById(Resource):
-    def post(self, groupid):
-        def add_group_to_user(username, groupid):
-            user = Users.objects.get(username=username)
-            user_groups = user.group_ids
-            user_groups.append(groupid)
-            Users.objects(username=username).update(group_ids=user_groups)
-            
-            response = {"message": "User added successfully.", "username": username, "groupid": groupid}
-            return response, 200
-
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        args = parser.parse_args() 
-
-        try:
-            group = Groups.objects.get(groupid=groupid)
-            group_users = group.user_names
-            if sessions_ids[args.get('session_id')] in group_users:
-                return {"message": "User already in group."}, 500
-            group_users.append(sessions_ids[args.get('session_id')])
-            Groups.objects(groupid=groupid).update(users=group_users)
-            
-        except DoesNotExist:
-            url = "https://maps.googleapis.com/maps/api/geocode/json?place_id="+groupid+"&key=AIzaSyBu-btSrvUAGaR-GHHfdk0kjlwiO91XV8k&language=iw"
-            payload={}
-            headers = {}
-
-            response = requests.request("GET", url, headers=headers, data=payload)
-
-            response_json = json.loads(response.text)
-            groupname = response_json["results"][0]["formatted_address"]
-            grouptype = response_json["results"][0]["types"][0]
-
-            # If new group
-            g = Groups(
-                groupname=groupname,
-                grouptype=grouptype,
-                groupid=groupid,
-                users=[sessions_ids[args.get('session_id')]],
-            )
-            try:
-                g.save()
-            except ValidationError:
-                return {"message": "Bad input."}, 500
-            except NotUniqueError as e:
-                print(e)
-                return {"message": "User already exists."}, 500
-            else:
-                return add_group_to_user(sessions_ids[args.get('session_id')], groupid)
-
+            group.save()
         except ValidationError:
             return {"message": "Bad input."}, 500
         except NotUniqueError as e:
-            print(e)
-            return {"message": "User already exists."}, 500
+            return {"message": "Group already exists."}, 500
         else:
-            return add_group_to_user(sessions_ids[args.get('session_id')], groupid)
+            return {}, 200
