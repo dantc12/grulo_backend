@@ -1,4 +1,3 @@
-from flask_restful import Resource, reqparse
 from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
@@ -6,31 +5,29 @@ from app.sessions_ids import sessions_ids
 from app.utils import get_google_maps_coors
 
 
-class GetGroupsByCoor(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('coordinates', required=True)
-        parser.add_argument('session_id', required=True)
-        args = parser.parse_args()  # parse arguments to dictionary
+def get_groups_by_coor(session_id: str, coordinates: str):
+    try:
+        locs = get_google_maps_coors(coordinates)
+    except:
+        return {
+            "message": "Couldn't couldn't contact google API"
+        }, 400
 
-        loc_response = []
+    groups_res = []
+    for loc in locs:
+        try:
+            group = Groups.objects.get(group_id=loc["place_id"])
+        except DoesNotExist:
+            return {
+                "message": "Issue with getting google group from grulo groups db."
+            }, 400
+        users = group.users
+        user_name = sessions_ids[session_id]
+        if user_name not in [u.user_name for u in users]:
+            groups_res.append({
+                "group_id": loc["place_id"],
+                "group_name": loc["formatted_address"],
+                "group_type": loc["types"][0]
+            })
 
-        locs = get_google_maps_coors(args.get('coordinates'))
-
-        for loc in locs:
-            try:
-                group = Groups.objects.get(groupid=loc["place_id"])
-            except DoesNotExist:
-                raise Exception("Issue with getting google group from grulo groups db.")
-
-            users = group.users
-            username = sessions_ids[args.get('session_id')]
-
-            if username not in users:
-                loc_response.append({
-                    "groupid": loc["place_id"],
-                    "groupname": loc["formatted_address"],
-                    "grouptype": loc["types"][0],
-                    "users": users})
-
-        return {"data": loc_response}, 200
+    return groups_res, 200
