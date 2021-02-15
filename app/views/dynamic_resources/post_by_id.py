@@ -1,43 +1,43 @@
-from flask_restful import Resource, reqparse
+from typing import Dict
+
 from mongoengine import DoesNotExist
 
 from app.models.posts_model import Posts
 from app.sessions_ids import sessions_ids
 
 
-class PostById(Resource):
-    def get(self, post_id):
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        _ = parser.parse_args()
+def add_comment_to_post(post_id: int, body: Dict):
+    session_id = body.get("session_id")
+    text = body.get("text")
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+               }, 400
+    try:
+        post = Posts.objects.get(post_id=post_id)
+    except DoesNotExist:
+        return {"message": "Post doesn't exist."}, 500
+    else:
+        comment_index = len(post.comments)
+        post.comments.append({
+            "comment_index": comment_index,
+            "user_name": sessions_ids[session_id],
+            "text": text,
+            "liked_users": []
+        })
+        post.save()
+        return post.comments[-1], 200
 
-        try:
-            p = Posts.objects.get(post_id=post_id)
-        except DoesNotExist:
-            return {"message": "Post doesn't exist."}, 500
-        else:
-            response = {"message": "Found post successfully."}
-            response.update(p.json())
-            return response, 200
 
-    def post(self, post_id):  # add a comment
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        parser.add_argument('text', required=True)
-        args = parser.parse_args()
+def get_post_by_id(post_id: int, session_id: str):
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+               }, 400
 
-        try:
-            p = Posts.objects.get(post_id=post_id)
-        except DoesNotExist:
-            return {"message": "Post doesn't exist."}, 500
-        else:
-            comment_index = len(p.comments)
-            p.comments += [{
-                "comment_index": comment_index,
-                "user_name": sessions_ids[args['session_id']],
-                "text": args['text'],
-                "liked_users_names": []
-            }]
-            response = {"message": "Added comment to post successfully."}
-            response.update(p.comments[-1])
-            return response, 200
+    try:
+        p = Posts.objects.get(post_id=post_id)
+    except DoesNotExist:
+        return {"message": "Post doesn't exist."}, 500
+    else:
+        return p.json(), 200

@@ -283,6 +283,76 @@ paths:
                   type: "array"
                   items:
                     type: "integer"
+  /posts/{post_id}:
+    get:
+      tags:
+        - "posts"
+      summary: "Get a post by ID"
+      description: "returns post corresponding to ID."
+      operationId: "app.views.dynamic_resources.post_by_id.get_post_by_id"
+      parameters:
+        - name: "post_id"
+          in: "path"
+          type: "integer"
+          description: "the posts ID"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "Requested post doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the post"
+          schema:
+            $ref: "#/definitions/Post"
+    put:
+      tags:
+        - "posts"
+      summary: "add a comment to a post by ID"
+      description: ""
+      operationId: "app.views.dynamic_resources.post_by_id.add_comment_to_post"
+      parameters:
+        - name: "post_id"
+          in: "path"
+          type: "integer"
+          description: "the posts ID"
+          required: true
+        - in: "body"
+          name: "body"
+          description: "the text for the comment"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - session_id
+              - text
+            properties:
+              session_id:
+                type: "string"
+              text:
+                type: "string"
+      responses:
+        "500":
+          description: "Requested post doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the comment"
+          schema:
+            $ref: "#/definitions/Comment"
   # /pet/{petId}:
   #   get:
   #     tags:
@@ -730,7 +800,7 @@ definitions:
       comments:
         type: "array"
         items:
-          type: "string"
+          $ref: "#/definitions/Comment"
   User:
     type: "object"
     properties:
@@ -752,6 +822,19 @@ definitions:
         type: "string"
       bio:
         type: "string"
+  Comment:
+    type: "object"
+    properties:
+      comment_index:
+        type: "integer"
+      user_name:
+        type: "string"
+      text:
+        type: "string"
+      liked_users:
+        type: "array"
+        items:
+          type: "string"
 #   Order:
 #     type: "object"
 #     properties:

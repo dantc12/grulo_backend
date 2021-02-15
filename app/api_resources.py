@@ -41,10 +41,10 @@ api_resources = [
     #     "name": GetAllGroups,
     #     "path": '/groups'
     # },
-    {
-        "name": PostById,
-        "path": '/posts/<int:post_id>'
-    },
+    # {
+    #     "name": PostById,
+    #     "path": '/posts/<int:post_id>'
+    # },
     {
         "name": GroupById,
         "path": '/groups/<string:groupid>'
