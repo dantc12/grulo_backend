@@ -13,34 +13,34 @@ from app.views.groups_resources.search_groups import SearchGroup
 from app.views.groups_resources.groups_by_coor import GetGroupsByCoor
 
 api_resources = [
-    {
-        "name": IsAlive,
-        "path": '/'
-    },
-    {
-        "name": Login,
-        "path": '/login'
-    },
-    {
-        "name": SignUp,
-        "path": '/signup'
-    },
-    {
-        "name": Logout,
-        "path": '/logout'
-    },
-    {
-        "name": PostsResource,
-        "path": '/posts'
-    },
-    {
-        "name": GetGroupsByCoor,
-        "path": '/groups/getByCoor'
-    },
-    {
-        "name": GetAllGroups,
-        "path": '/groups'
-    },
+    # {
+    #     "name": IsAlive,
+    #     "path": '/'
+    # },
+    # {
+    #     "name": Login,
+    #     "path": '/login'
+    # },
+    # {
+    #     "name": SignUp,
+    #     "path": '/signup'
+    # },
+    # {
+    #     "name": Logout,
+    #     "path": '/logout'
+    # },
+    # {
+    #     "name": PostsResource,
+    #     "path": '/posts'
+    # },
+    # {
+    #     "name": GetGroupsByCoor,
+    #     "path": '/groups/getByCoor'
+    # },
+    # {
+    #     "name": GetAllGroups,
+    #     "path": '/groups'
+    # },
     {
         "name": PostById,
         "path": '/posts/<int:post_id>'

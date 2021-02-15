@@ -10,7 +10,7 @@ basePath: "/api"
 tags:
   - name: "user"
     description: "Operations regarding users of Grulo"
-  - name: "group"
+  - name: "groups"
     description: "Operations regarding the groups in Grulo"
   - name: "posts"
     description: "Operations regarding the different posts in Grulo"
@@ -152,6 +152,10 @@ paths:
           required: false
           type: "integer"
       responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         "200":
           description: "Got all relevant posts for the user (might be zero though)"
           schema:
@@ -186,12 +190,99 @@ paths:
               text:
                 type: "string"
       responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
         "500":
           description: "Requested group doesn't exist"
           schema:
             $ref: "#/definitions/ErrorMessage"
         "200":
           description: "created new post."
+  /groups/get_by_coor:
+    get:
+      tags:
+        - "groups"
+      summary: "Get all the groups in the given coordinates"
+      description: "Returns all the groups in the location."
+      operationId: "app.views.groups_resources.groups_by_coor.get_groups_by_coor"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "coordinates"
+          in: "query"
+          description: "the coordinates of the user's location"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the groups in the location of the user"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                group_id:
+                  type: "integer"
+                group_name:
+                  type: "string"
+                group_type:
+                  type: "string"
+                users:
+                  type: "array"
+                  items:
+                    $ref: "#/definitions/User"
+  /groups/:
+    get:
+      tags:
+        - "groups"
+      summary: "Get all the groups in Grulo"
+      description: "Returns all the groups in Grulo."
+      operationId: "app.views.groups_resources.groups_resource.get_all_groups"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning all the groups in Grulo"
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                group_id:
+                  type: "integer"
+                group_name:
+                  type: "string"
+                group_type:
+                  type: "string"
+                users:
+                  type: "array"
+                  items:
+                    $ref: "#/definitions/User"
+                post_ids:
+                  type: "array"
+                  items:
+                    type: "integer"
   # /pet/{petId}:
   #   get:
   #     tags:
@@ -640,6 +731,27 @@ definitions:
         type: "array"
         items:
           type: "string"
+  User:
+    type: "object"
+    properties:
+      user_name:
+        type: "string"
+      email:
+        type: "string"
+      address:
+        type: "string"
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      birthday:
+        type: "string"
+      phone_number:
+        type: "string"
+      gender:
+        type: "string"
+      bio:
+        type: "string"
 #   Order:
 #     type: "object"
 #     properties:
