@@ -334,6 +334,39 @@ paths:
             type: "array"
             items:
               $ref: "#/definitions/Post"
+  /posts/get_by_coor:
+    get:
+      tags:
+        - "posts"
+      summary: "Get all the posts of the groups in given coordinates"
+      description: "Returns all the groups of the coordinates location."
+      operationId: "app.views.groups_resources.posts_resources.get_posts_by_coor"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "coordinates"
+          in: "query"
+          description: "the coordinates of the user's location"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the posts of the given location"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
   /groups/get_by_coor:
     get:
       tags:
