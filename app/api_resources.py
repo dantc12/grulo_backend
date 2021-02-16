@@ -53,10 +53,10 @@ api_resources = [
     #     "name": SearchGroup,
     #     "path": '/groups/search'
     # },
-    {
-        "name": UserByName,
-        "path": '/users/<string:username>'
-    },
+    # {
+    #     "name": UserByName,
+    #     "path": '/users/<string:username>'
+    # },
     # {
     #     "name": AddUserToGroupById,
     #     "path": '/groups/<string:groupid>'

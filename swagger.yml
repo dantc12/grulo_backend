@@ -8,7 +8,7 @@ info:
 host: "grulo.io"
 basePath: "/api"
 tags:
-  - name: "user"
+  - name: "users"
     description: "Operations regarding users of Grulo"
   - name: "groups"
     description: "Operations regarding the groups in Grulo"
