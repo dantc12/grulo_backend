@@ -18,3 +18,14 @@ class UserByName(Resource):
             response = {"message": "Found user successfully."}
             response.update(u.json())
             return response, 200
+
+
+def get_user_by_name(user_name: str):
+    try:
+        u = Users.objects.get(username=username)
+    except DoesNotExist:
+        return {"message": "User doesn't exist."}, 500
+    else:
+        response = {"message": "Found user successfully."}
+        response.update(u.json())
+        return response, 200

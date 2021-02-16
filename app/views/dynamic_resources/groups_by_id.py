@@ -3,14 +3,14 @@ from app.models.users_model import Users
 from app.models.groups_model import Groups
 from mongoengine import NotUniqueError, ValidationError, DoesNotExist
 
-from app.utils import get_google_group_by_id
+from app.utils import get_google_group_by_id, check_if_logged_in
 
 
 def get_group_by_id(group_id: str, session_id: str):
-    if session_id not in sessions_ids.keys():
-        return {
-                   "message": "Not logged in"
-               }, 400
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
+
     try:
         group = Groups.objects.get(group_id=group_id)
     except DoesNotExist:

@@ -2,14 +2,14 @@ from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.sessions_ids import sessions_ids
-from app.utils import get_google_groups_by_coor
+from app.utils import get_google_groups_by_coor, check_if_logged_in
 
 
 def get_groups_by_coor(session_id: str, coordinates: str):
-    if session_id not in sessions_ids.keys():
-        return {
-                   "message": "Not logged in"
-               }, 400
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
+
     try:
         locs = get_google_groups_by_coor(coordinates)
     except:

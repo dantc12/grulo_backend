@@ -33,7 +33,7 @@ paths:
   /user/login:
     post:
       tags:
-        - "user"
+        - "users"
       summary: "Login into Grulo"
       description: ""
       operationId: "app.views.authentication.login_resource.login"
@@ -67,7 +67,7 @@ paths:
   /user:
     post:
       tags:
-        - "user"
+        - "users"
       summary: "Sign up to Grulo"
       description: ""
       operationId: "app.views.authentication.sign_up_resource.sign_up"
@@ -111,10 +111,41 @@ paths:
             $ref: "#/definitions/ErrorMessage"
         "200":
           description: "sign up was successful. user was created"
+  /user/{user_name}:
+    get:
+      tags:
+        - "users"
+      summary: "Get a user by name"
+      description: "returns the user corresponding to the name."
+      operationId: "app.views.dynamic_resources.users_by_name.get_user_by_name"
+      parameters:
+        - name: "user_name"
+          in: "path"
+          type: "integer"
+          description: "the user name"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "Requested user doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the user"
+          schema:
+            $ref: "#/definitions/User"
   /user/logout:
     post:
       tags:
-        - "user"
+        - "users"
       summary: "Logout from Grulo"
       description: ""
       operationId: "app.views.authentication.logout_resource.logout"

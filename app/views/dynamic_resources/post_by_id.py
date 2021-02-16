@@ -4,15 +4,17 @@ from mongoengine import DoesNotExist
 
 from app.models.posts_model import Posts
 from app.sessions_ids import sessions_ids
+from app.utils import check_if_logged_in
 
 
 def add_comment_to_post(post_id: int, body: Dict):
     session_id = body.get("session_id")
     text = body.get("text")
-    if session_id not in sessions_ids.keys():
-        return {
-                   "message": "Not logged in"
-               }, 400
+
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
+
     try:
         post = Posts.objects.get(post_id=post_id)
     except DoesNotExist:

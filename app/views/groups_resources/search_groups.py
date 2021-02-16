@@ -1,12 +1,11 @@
-from app.sessions_ids import sessions_ids
-from app.utils import get_google_groups_by_addr
+from app.utils import get_google_groups_by_addr, check_if_logged_in
 
 
 def get_group_by_address(session_id: str, address: str):
-    if session_id not in sessions_ids.keys():
-        return {
-                   "message": "Not logged in"
-               }, 400
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
+
     google_groups = get_google_groups_by_addr(address)
 
     results = []

@@ -3,6 +3,8 @@ from typing import Dict, List
 
 import requests
 
+from app.sessions_ids import sessions_ids
+
 
 def get_google_groups_by_coor(coor_str: str) -> List[Dict]:
     url = "https://maps.googleapis.com/maps/api/geocode/json?latlng=" \
@@ -29,3 +31,12 @@ def get_google_groups_by_addr(address: str):
 
     search_results = json.loads(response.text)["results"]
     return search_results
+
+
+def check_if_logged_in(session_id: str):
+    if session_id not in sessions_ids.keys():
+        return {
+                   "message": "Not logged in"
+        }, 400
+    else:
+        return {}, 200
