@@ -386,6 +386,39 @@ paths:
             $ref: "#/definitions/ErrorMessage"
         "200":
           description: "Added user to group"
+  /groups/get_by_addr:
+    get:
+      tags:
+        - "groups"
+      summary: "search - Get all the groups by the given address"
+      description: "Returns the user options of possible groups to join in the address. These are not necessarily groups in Grulo."
+      operationId: "app.views.groups_resources.search_groups.get_group_by_address"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "address"
+          in: "query"
+          description: "the address"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the group options in the location of the user (explore)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
 definitions:
   ErrorMessage:
     type: "object"
