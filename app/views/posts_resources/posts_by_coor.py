@@ -3,7 +3,7 @@ from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.models.posts_model import Posts
-from app.utils import get_google_maps_coors
+from app.utils import get_google_groups_by_coor
 
 
 class GetPostsByCoor(Resource):
@@ -13,7 +13,7 @@ class GetPostsByCoor(Resource):
         parser.add_argument('session_id', required=True)
         args = parser.parse_args()  # parse arguments to dictionary
 
-        locs = get_google_maps_coors(args.get('coordinates'))
+        locs = get_google_groups_by_coor(args.get('coordinates'))
 
         res_posts = []
         for loc in locs:

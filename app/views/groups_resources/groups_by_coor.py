@@ -2,7 +2,7 @@ from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.sessions_ids import sessions_ids
-from app.utils import get_google_maps_coors
+from app.utils import get_google_groups_by_coor
 
 
 def get_groups_by_coor(session_id: str, coordinates: str):
@@ -11,7 +11,7 @@ def get_groups_by_coor(session_id: str, coordinates: str):
                    "message": "Not logged in"
                }, 400
     try:
-        locs = get_google_maps_coors(coordinates)
+        locs = get_google_groups_by_coor(coordinates)
     except:
         return {
                    "message": "Couldn't contact google API"

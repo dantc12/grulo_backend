@@ -3,7 +3,7 @@ from app.models.users_model import Users
 from app.models.groups_model import Groups
 from mongoengine import NotUniqueError, ValidationError, DoesNotExist
 
-from app.utils import get_google_maps_group
+from app.utils import get_google_group_by_id
 
 
 def get_group_by_id(group_id: str, session_id: str):
@@ -40,7 +40,7 @@ def add_user_to_group(group_id: str, session_id: str):
         Groups.objects(group_id=group_id).update(user_names=group_user_names)
     except DoesNotExist:
         # If new group
-        group_name, group_type = get_google_maps_group(group_id)
+        group_name, group_type = get_google_group_by_id(group_id)
         group = Groups(
             group_name=group_name,
             group_type=group_type,
