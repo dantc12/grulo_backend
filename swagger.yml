@@ -301,6 +301,39 @@ paths:
           description: "Returning the comment"
           schema:
             $ref: "#/definitions/Comment"
+  /posts/get_by_group:
+    get:
+      tags:
+        - "posts"
+      summary: "Get all the posts of a given group"
+      description: "Returns all the posts of the given group"
+      operationId: "app.views.posts_resources.posts_by_group.get_posts_by_group_name"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "group_name"
+          in: "query"
+          description: "the name of the group of interest"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "500":
+          description: "Group doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the posts of the group given (might be zero still)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
   /groups/get_by_coor:
     get:
       tags:

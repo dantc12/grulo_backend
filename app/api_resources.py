@@ -61,10 +61,10 @@ api_resources = [
     #     "name": AddUserToGroupById,
     #     "path": '/groups/<string:groupid>'
     # },
-    {
-        "name": PostsByGroupName,
-        "path": '/posts/get_by_groupname'
-    },
+    # {
+    #     "name": PostsByGroupName,
+    #     "path": '/posts/get_by_groupname'
+    # },
     {
         "name": GetPostsByCoor,
         "path": '/posts/get_by_coor'
