@@ -45,22 +45,22 @@ api_resources = [
     #     "name": PostById,
     #     "path": '/posts/<int:post_id>'
     # },
-    {
-        "name": GroupById,
-        "path": '/groups/<string:groupid>'
-    },
-    {
-        "name": SearchGroup,
-        "path": '/groups/search'
-    },
+    # {
+    #     "name": GroupById,
+    #     "path": '/groups/<string:groupid>'
+    # },
+    # {
+    #     "name": SearchGroup,
+    #     "path": '/groups/search'
+    # },
     {
         "name": UserByName,
         "path": '/users/<string:username>'
     },
-    {
-        "name": AddUserToGroupById,
-        "path": '/groups/<string:groupid>'
-    },
+    # {
+    #     "name": AddUserToGroupById,
+    #     "path": '/groups/<string:groupid>'
+    # },
     {
         "name": PostsByGroupName,
         "path": '/posts/get_by_groupname'
