@@ -1,12 +1,12 @@
-from flask_restful import Resource, reqparse
 from app.models.groups_model import Groups
 import json
-from app.sessions_ids import sessions_ids
+from app.utils import check_if_logged_in
 
-class GetAllGroups(Resource):
-    def get(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        _ = parser.parse_args()  # parse arguments to dictionary
-        groups = Groups.objects()
-        return json.loads(groups.to_json()), 200
+
+def get_all_groups(session_id: str):
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
+
+    groups = Groups.objects()
+    return json.loads(groups.to_json()), 200

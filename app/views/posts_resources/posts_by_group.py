@@ -1,23 +1,18 @@
-from flask_restful import Resource, reqparse
 from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.models.posts_model import Posts
+from app.utils import check_if_logged_in
 
 
-class PostsByGroupName(Resource):
-    def get(self):  # get all posts given a groupname
-        parser = reqparse.RequestParser()
-        parser.add_argument('session_id', required=True)
-        parser.add_argument('groupname', required=True)
-        args = parser.parse_args()
+def get_posts_by_group_name(session_id: str, group_name: str):
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
 
-        try:
-            g = Groups.objects.get(groupname=args['groupname'])
-        except DoesNotExist:
-            return {"message": "Group doesn't exist."}, 530
+    try:
+        group = Groups.objects.get(group_name=group_name)
+    except DoesNotExist:
+        return {"message": "Group doesn't exist."}, 500
 
-        return {
-            "message": "retrieved posts of group {}".format(g.groupname),
-            "posts": [Posts.objects.get(post_id=post_id) for post_id in g.postids]
-        }, 200
+    return [Posts.objects.get(post_id=post_id).json() for post_id in group.post_ids], 200

@@ -7,18 +7,19 @@ from mongoengine import (
 
 
 class Groups(Document):
-    groupname = StringField(max_length=100, required=True)
-    grouptype = StringField(max_length=100, required=True)
-    groupid = StringField(max_length=100, required=True)
-    users = ListField(StringField(), default=["noam"], required=True)
-    postids = ListField(IntField())
+    group_name = StringField(max_length=100, required=True)
+    group_type = StringField(max_length=100, required=True)
+    group_id = IntField(max_length=100, required=True)
+    user_names = ListField(StringField(), default=[])
+    post_ids = ListField(IntField(), default=[])
 
     def json(self):
         group_dict = {
-            "groupname": self.groupname,
-            "grouptype": self.grouptype,
-            "groupid": self.groupid,
-            "users": self.users
+            "group_name": self.group_name,
+            "group_type": self.group_type,
+            "group_id": self.group_id,
+            "user_names": self.user_names,
+            "post_ids": self.post_ids
         }
         return group_dict
 

@@ -9,12 +9,12 @@ from mongoengine import (
 
 
 class Users(Document):
-    username = StringField(max_length=60, required=True, unique=True)
+    user_name = StringField(max_length=60, required=True, unique=True)
     email = EmailField(unique=True)
     password = StringField(max_length=60, required=True)
     address = StringField(max_length=60, required=True)
-    firstname = StringField(max_length=20)
-    lastname = StringField(max_length=20)
+    first_name = StringField(max_length=20)
+    last_name = StringField(max_length=20)
     birthday = DateTimeField(default=datetime.datetime.utcnow)
     phone = StringField(max_length=20)
     gender = StringField(max_length=20)
@@ -24,12 +24,11 @@ class Users(Document):
 
     def json(self):
         user_dict = {
-            "username": self.username,
+            "user_name": self.user_name,
             "email": self.email,
-            "password": self.password,
             "address": self.address,
-            "firstname": self.firstname,
-            "lastname": self.lastname,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
             "birthday": str(self.birthday),
             "phone": self.phone,
             "gender": self.gender,

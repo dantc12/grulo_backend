@@ -1,36 +1,39 @@
-from flask_restful import Resource, reqparse
 from mongoengine import DoesNotExist
 
 from app.models.groups_model import Groups
 from app.sessions_ids import sessions_ids
-from app.utils import get_google_maps_coors
+from app.utils import get_google_groups_by_coor, check_if_logged_in
 
 
-class GetGroupsByCoor(Resource):
-    def post(self):
-        parser = reqparse.RequestParser()
-        parser.add_argument('coordinates', required=True)
-        parser.add_argument('session_id', required=True)
-        args = parser.parse_args()  # parse arguments to dictionary
+def get_groups_by_coor(session_id: str, coordinates: str):
+    message, return_code = check_if_logged_in(session_id)
+    if return_code == 400:
+        return message, return_code
 
-        loc_response = []
+    try:
+        locs = get_google_groups_by_coor(coordinates)
+    except:
+        return {
+                   "message": "Couldn't contact google API"
+               }, 401
 
-        locs = get_google_maps_coors(args.get('coordinates'))
-
-        for loc in locs:
-            try:
-                group = Groups.objects.get(groupid=loc["place_id"])
-            except DoesNotExist:
-                raise Exception("Issue with getting google group from grulo groups db.")
-
-            users = group.users
-            username = sessions_ids[args.get('session_id')]
-
-            if username not in users:
-                loc_response.append({
-                    "groupid": loc["place_id"],
-                    "groupname": loc["formatted_address"],
-                    "grouptype": loc["types"][0],
-                    "users": users})
-
-        return {"data": loc_response}, 200
+    group_options = []
+    for loc in locs:
+        try:
+            group = Groups.objects.get(group_id=loc["place_id"])
+        except DoesNotExist:
+            group = None
+            group_user_names = []
+        else:
+            group_user_names = group.user_names
+        user_name = sessions_ids[session_id]
+        if user_name not in group_user_names:
+            if group:
+                group_options.append(group.json())
+            else:
+                group_options.append({
+                    "group_id": loc["place_id"],
+                    "group_name": loc["formatted_address"],
+                    "group_type": loc["types"][0]
+                })
+    return group_options, 200

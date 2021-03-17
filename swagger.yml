@@ -1,0 +1,595 @@
+swagger: "2.0"
+info:
+  description: "This is the BE API of the application Grulo."
+  version: "1.0.0"
+  title: "Grulo Backend REST API"
+  contact:
+    email: "dantc12@gmail.com"
+basePath: "/api"
+tags:
+  - name: "users"
+    description: "Operations regarding users of Grulo"
+  - name: "groups"
+    description: "Operations regarding the groups in Grulo"
+  - name: "posts"
+    description: "Operations regarding the different posts in Grulo"
+  - name: "misc."
+    description: "misc."
+schemes:
+  - "https"
+  - "http"
+paths:
+  /is_alive:
+    get:
+      tags:
+        - "misc."
+      summary: "Check that the BE server is alive"
+      description: ""
+      operationId: "app.views.authentication.is_alive.is_alive"
+      responses:
+        "200":
+          description: "server is alive"
+  /user/login:
+    post:
+      tags:
+        - "users"
+      summary: "Login into Grulo"
+      description: ""
+      operationId: "app.views.authentication.login_resource.login"
+      parameters:
+        - in: "body"
+          name: "login_info"
+          description: "login information: username and password"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - user_name
+              - password
+            properties:
+              user_name:
+                type: "string"
+              password:
+                type: "string"
+      responses:
+        "500":
+          description: "Username or password were incorrect"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "login successful. gets a session ID"
+          schema:
+            type: "object"
+            properties:
+              session_id:
+                type: "string"
+  /user:
+    post:
+      tags:
+        - "users"
+      summary: "Sign up to Grulo"
+      description: ""
+      operationId: "app.views.authentication.sign_up_resource.sign_up"
+      parameters:
+        - in: "body"
+          name: "sign_up_info"
+          description: "signup full information"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - user_name
+              - password
+              - email
+              - address
+            properties:
+              user_name:
+                type: "string"
+              password:
+                type: "string"
+              email:
+                type: "string"
+              address:
+                type: "string"
+              first_name:
+                type: "string"
+              last_name:
+                type: "string"
+              birthday:
+                type: "string"
+              phone_number:
+                type: "string"
+              gender:
+                type: "string"
+              bio:
+                type: "string"
+      responses:
+        "500":
+          description: "Bad input was inserted"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "sign up was successful. user was created"
+  /user/{user_name}:
+    get:
+      tags:
+        - "users"
+      summary: "Get a user by name"
+      description: "returns the user corresponding to the name."
+      operationId: "app.views.dynamic_resources.users_by_name.get_user_by_name"
+      parameters:
+        - name: "user_name"
+          in: "path"
+          type: "integer"
+          description: "the user name"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "Requested user doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the user"
+          schema:
+            $ref: "#/definitions/User"
+  /user/logout:
+    post:
+      tags:
+        - "users"
+      summary: "Logout from Grulo"
+      description: ""
+      operationId: "app.views.authentication.logout_resource.logout"
+      parameters:
+        - in: "body"
+          name: "logout_info"
+          description: "logout information: the session ID"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - session_id
+            properties:
+              session_id:
+                type: "string"
+      responses:
+        "200":
+          description: "logout successful."
+  /posts:
+    get:
+      tags:
+        - "posts"
+      summary: "Get all posts that are relevant to the connected user"
+      description: "Returns all posts from the groups the user is a member of."
+      operationId: "app.views.posts_resources.posts_resource.get_posts_for_user"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "limit"
+          in: "query"
+          description: "An optional limit to the amount of posts returned"
+          required: false
+          type: "integer"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all relevant posts for the user (might be zero though)"
+          schema:
+            type: "object"
+            properties:
+              posts:
+                type: "array"
+                items:
+                  $ref: "#/definitions/Post"
+    post:
+      tags:
+        - "posts"
+      summary: "Create a new post ('post' a post)"
+      description: ""
+      operationId: "app.views.posts_resources.posts_resource.create_post"
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "new post data with attached session ID"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - session_id
+              - group_name
+              - text
+            properties:
+              session_id:
+                type: "string"
+              group_name:
+                type: "string"
+              text:
+                type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "500":
+          description: "Requested group doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "created new post."
+  /posts/{post_id}:
+    get:
+      tags:
+        - "posts"
+      summary: "Get a post by ID"
+      description: "returns post corresponding to ID."
+      operationId: "app.views.dynamic_resources.post_by_id.get_post_by_id"
+      parameters:
+        - name: "post_id"
+          in: "path"
+          type: "integer"
+          description: "the posts ID"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "Requested post doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the post"
+          schema:
+            $ref: "#/definitions/Post"
+    put:
+      tags:
+        - "posts"
+      summary: "add a comment to a post by ID"
+      description: ""
+      operationId: "app.views.dynamic_resources.post_by_id.add_comment_to_post"
+      parameters:
+        - name: "post_id"
+          in: "path"
+          type: "integer"
+          description: "the posts ID"
+          required: true
+        - in: "body"
+          name: "body"
+          description: "the text for the comment"
+          required: true
+          schema:
+            type: "object"
+            required:
+              - session_id
+              - text
+            properties:
+              session_id:
+                type: "string"
+              text:
+                type: "string"
+      responses:
+        "500":
+          description: "Requested post doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the comment"
+          schema:
+            $ref: "#/definitions/Comment"
+  /posts/get_by_group:
+    get:
+      tags:
+        - "posts"
+      summary: "Get all the posts of a given group"
+      description: "Returns all the posts of the given group"
+      operationId: "app.views.posts_resources.posts_by_group.get_posts_by_group_name"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "group_name"
+          in: "query"
+          description: "the name of the group of interest"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "500":
+          description: "Group doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the posts of the group given (might be zero still)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+  /posts/get_by_coor:
+    get:
+      tags:
+        - "posts"
+      summary: "Get all the posts of the groups in given coordinates"
+      description: "Returns all the groups of the coordinates location."
+      operationId: "app.views.posts_resources.posts_by_coor.get_posts_by_coor"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "coordinates"
+          in: "query"
+          description: "the coordinates of the user's location"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the posts of the given location"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Post"
+  /groups/get_by_coor:
+    get:
+      tags:
+        - "groups"
+      summary: "explore - Get all the groups in the given coordinates"
+      description: "Returns the user options of possible groups to join in his area. These are not necessarily groups in Grulo."
+      operationId: "app.views.groups_resources.groups_by_coor.get_groups_by_coor"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "coordinates"
+          in: "query"
+          description: "the coordinates of the user's location"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the group options in the location of the user (explore)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+  /groups/:
+    get:
+      tags:
+        - "groups"
+      summary: "Get all the groups in Grulo"
+      description: "Returns all the groups in Grulo."
+      operationId: "app.views.groups_resources.groups_resource.get_all_groups"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning all the groups in Grulo"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+  /groups/{group_id}:
+    get:
+      tags:
+        - "groups"
+      summary: "Get a group by ID"
+      description: "returns group corresponding to ID."
+      operationId: "app.views.dynamic_resources.groups_by_id.get_group_by_id"
+      parameters:
+        - name: "group_id"
+          in: "path"
+          type: "integer"
+          description: "the groups ID"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "Requested group doesn't exist"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Returning the group"
+          schema:
+            $ref: "#/definitions/Group"
+    put:
+      tags:
+        - "groups"
+      summary: "add the connected user to a group"
+      description: "adds the connected user to a group of the corresponding group ID"
+      operationId: "app.views.dynamic_resources.groups_by_id.add_user_to_group"
+      parameters:
+        - name: "group_id"
+          in: "path"
+          type: "integer"
+          description: "the groups ID"
+          required: true
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+      responses:
+        "500":
+          description: "User already in group or bad input"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Added user to group"
+  /groups/get_by_addr:
+    get:
+      tags:
+        - "groups"
+      summary: "search - Get all the groups by the given address"
+      description: "Returns the user options of possible groups to join in the address. These are not necessarily groups in Grulo."
+      operationId: "app.views.groups_resources.search_groups.get_group_by_address"
+      parameters:
+        - name: "session_id"
+          in: "query"
+          description: "The connected user's session ID"
+          required: true
+          type: "string"
+        - name: "address"
+          in: "query"
+          description: "the address"
+          required: true
+          type: "string"
+      responses:
+        "400":
+          description: "Not logged in"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "401":
+          description: "Encountered problems with getting the groups"
+          schema:
+            $ref: "#/definitions/ErrorMessage"
+        "200":
+          description: "Got all the group options in the location of the user (explore)"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/Group"
+definitions:
+  ErrorMessage:
+    type: "object"
+    properties:
+      message:
+        type: "string"
+  Post:
+    type: "object"
+    properties:
+      post_id:
+        type: "integer"
+      user_name:
+        type: "string"
+      group_name:
+        type: "string"
+      text:
+        type: "string"
+      post_date:
+        type: "string"
+        format: "date-time"
+      last_update:
+        type: "string"
+        format: "date-time"
+      comments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Comment"
+  User:
+    type: "object"
+    properties:
+      user_name:
+        type: "string"
+      email:
+        type: "string"
+      address:
+        type: "string"
+      first_name:
+        type: "string"
+      last_name:
+        type: "string"
+      birthday:
+        type: "string"
+      phone_number:
+        type: "string"
+      gender:
+        type: "string"
+      bio:
+        type: "string"
+  Comment:
+    type: "object"
+    properties:
+      comment_index:
+        type: "integer"
+      user_name:
+        type: "string"
+      text:
+        type: "string"
+      liked_users:
+        type: "array"
+        items:
+          type: "string"
+  Group:
+    type: "object"
+    properties:
+      group_id:
+        type: "integer"
+      group_name:
+        type: "string"
+      group_type:
+        type: "string"
+      user_names:
+        type: "array"
+        items:
+          type: "string"
+      post_ids:
+        type: "array"
+        items:
+          type: "integer"
