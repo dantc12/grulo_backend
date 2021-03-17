@@ -340,7 +340,7 @@ paths:
         - "posts"
       summary: "Get all the posts of the groups in given coordinates"
       description: "Returns all the groups of the coordinates location."
-      operationId: "app.views.groups_resources.posts_resources.get_posts_by_coor"
+      operationId: "app.views.posts_resources.get_posts_by_coor"
       parameters:
         - name: "session_id"
           in: "query"
