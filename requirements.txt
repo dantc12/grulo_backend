@@ -1,6 +1,7 @@
-Flask
+Flask>=1.0.4
 mongoengine
 Flask-RESTful
 requests
 connexion
 connexion[swagger-ui]
+flask-cors
