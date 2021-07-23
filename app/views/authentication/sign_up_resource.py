@@ -23,6 +23,6 @@ def sign_up(sign_up_info: Dict):
     except ValidationError:
         return {"message": "Bad input."}, 500
     except NotUniqueError as e:
-        return {"message": "User already exists."}, 500
+        return {"message": "User name or email already in use."}, 500
     else:
         return {}, 200
