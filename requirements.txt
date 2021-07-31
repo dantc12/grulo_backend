@@ -1,7 +1,2 @@
-Flask>=1.0.4
+fastapi
 mongoengine
-Flask-RESTful
-requests
-connexion
-connexion[swagger-ui]
-flask-cors
