@@ -18,6 +18,10 @@ def post_new_post(post: schemas.PostCreate) -> schemas.Post:
     try:
         new_post = posts.create_post(post)
         return schemas.Post(**new_post.to_dict())
+    except exceptions.UserNotFound as e:
+        raise HTTPException(404, str(e))
+    except exceptions.GroupNotFound as e:
+        raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 

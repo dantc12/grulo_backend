@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 
+from .. import database
 from .. import schemas, exceptions
 from ..database_crud import users
-from .. import database
 
 router = APIRouter(
-    prefix="/user",
+    prefix="/users",
     tags=["users"],
-    dependencies=[Depends(database.connect_to_db)],  # TODO add the security part
-    responses={404: {"detail": "Not found."}}
+    dependencies=[Depends(database.connect_to_db)]  # TODO add the security part
 )
 
 
