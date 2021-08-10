@@ -84,6 +84,10 @@ class GroupCreate(GroupBase):
     pass
 
 
+class QueryGroup(GroupBase):
+    pass
+
+
 class Group(GroupBase):
     group_id: str
     users: List[str]
