@@ -57,7 +57,7 @@ class Group(Document):
     group_name = StringField(required=True, unique=True)
     group_type = StringField(required=True)
     users = ListField(StringField(), default=[])
-    posts_ids = ListField(StringField(), default=[])
+    post_ids = ListField(StringField(), default=[])
 
     meta = {"collection": "groups"}
 

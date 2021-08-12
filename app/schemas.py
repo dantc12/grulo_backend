@@ -91,7 +91,7 @@ class QueryGroup(GroupBase):
 class Group(GroupBase):
     group_id: str
     users: List[str]
-    posts_ids: List[str]
+    post_ids: List[str]
 
     class Config:
         orm_mode = True
