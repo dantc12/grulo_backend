@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from .. import exceptions, schemas, models
-from . import users, groups
+from .. import exceptions, schemas
+from . import users, groups, models
 
 
 def get_post_by_id(post_id: str) -> models.Post:

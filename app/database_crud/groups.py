@@ -1,7 +1,7 @@
 from typing import List
 
-from . import users
-from .. import exceptions, models, schemas
+from . import users, models
+from .. import exceptions, schemas
 
 
 # TODO Not done here
