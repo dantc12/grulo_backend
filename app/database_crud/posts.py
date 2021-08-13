@@ -1,16 +1,13 @@
 from typing import List, Optional
 
-from .. import exceptions, schemas
 from . import users, groups, models
+from .. import exceptions, schemas
 
 
 def get_post_by_id(post_id: str) -> models.Post:
     if models.Post.objects(post_id=post_id):
         return models.Post.objects(post_id=post_id)[0]
     raise exceptions.PostNotFound(post_id)
-
-
-# TODO add edit post
 
 
 def add_comment_to_post(post_id: str, comment: schemas.CommentCreate) -> models.Post:
@@ -72,5 +69,3 @@ def get_posts_by_group_name(group_name: str) -> List[models.Post]:
 def get_posts_by_group_id(group_id: str) -> List[models.Post]:
     group = groups.get_group_by_id(group_id)
     return [get_post_by_id(post_id) for post_id in group.post_ids]
-
-# TODO add get posts by coordinates

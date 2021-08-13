@@ -40,8 +40,8 @@ class Post(Document):
     post_date = DateTimeField(default=datetime.datetime.utcnow)
     last_update = DateTimeField(default=datetime.datetime.utcnow)
 
-    likes = ListField(default=[])  # TODO add model for this
-    comments = ListField(default=[])  # TODO add model for this
+    likes = ListField(default=[])
+    comments = ListField(default=[])
 
     meta = {"collection": "posts"}
 

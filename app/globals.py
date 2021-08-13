@@ -1,5 +1,8 @@
 import json
 import os
+
+from mongoengine import connect
+
 from .reverse_geocoding import GoogleGeocoder
 
 
@@ -15,3 +18,5 @@ mongo_config = app_config.get("db")
 reverse_geocoding_config = app_config.get("reverse_geocoding")
 
 reverse_geocoder = GoogleGeocoder(**reverse_geocoding_config)
+
+connect(**mongo_config)

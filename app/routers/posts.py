@@ -1,15 +1,14 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 
-from .. import database, exceptions
+from .. import exceptions
 from .. import schemas
 from ..database_crud import posts
 
 router = APIRouter(
     prefix="/posts",
-    tags=["posts"],
-    dependencies=[Depends(database.connect_to_db)]  # TODO add the security part
+    tags=["posts"]
 )
 
 
@@ -79,15 +78,3 @@ def get_all_posts_for_user(username: str, limit: Optional[int] = None) -> List[s
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
-
-# @router.get("/by_coor")
-# def get_posts_by_coordinates(group_name: str) -> List[schemas.Post]:
-#     try:
-#         group_posts = posts.get_posts_by_group_name(group_name)
-#         return [schemas.Post(**post.to_dict()) for post in group_posts]
-#     except exceptions.GroupNotFound as e:
-#         raise HTTPException(404, str(e))
-#     except Exception as e:
-#         raise HTTPException(500, str(e))
-
-# TODO add get posts by coordinates

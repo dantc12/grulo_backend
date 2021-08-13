@@ -4,8 +4,6 @@ from . import users, models
 from .. import exceptions, schemas
 
 
-# TODO Not done here
-
 def get_group_by_id(group_id: str) -> models.Group:
     if models.Group.objects(group_id=group_id):
         return models.Group.objects(group_id=group_id)[0]

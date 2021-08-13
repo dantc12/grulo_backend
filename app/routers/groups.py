@@ -1,17 +1,14 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException
 
-from .. import database
 from .. import schemas, exceptions
 from ..database_crud import groups
-from ..dependencies import reverse_geocoder
-from ..reverse_geocoding import Place
+from ..globals import reverse_geocoder
 
 router = APIRouter(
     prefix="/groups",
-    tags=["groups"],
-    dependencies=[Depends(database.connect_to_db)]  # TODO add the security part
+    tags=["groups"]
 )
 
 
