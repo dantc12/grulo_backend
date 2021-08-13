@@ -17,9 +17,7 @@ def post_new_post(post: schemas.PostCreate) -> schemas.Post:
     try:
         new_post = posts.create_post(post)
         return schemas.Post(**new_post.to_dict())
-    except exceptions.UserNotFound as e:
-        raise HTTPException(404, str(e))
-    except exceptions.GroupNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
@@ -30,7 +28,7 @@ def get_post_by_id(post_id: Optional[str] = None) -> schemas.Post:
     try:
         post = posts.get_post_by_id(post_id)
         return schemas.Post(**post.to_dict())
-    except exceptions.PostNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
@@ -50,9 +48,7 @@ def get_posts(group_name: Optional[str] = None,
         else:  # username is not None:
             found_posts = posts.get_posts_by_user(username)
         return [schemas.Post(**post.to_dict()) for post in found_posts]
-    except exceptions.GroupNotFound as e:
-        raise HTTPException(404, str(e))
-    except exceptions.UserNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
@@ -63,7 +59,7 @@ def add_comment_to_post(post_id: str, comment: schemas.CommentCreate) -> schemas
     try:
         post = posts.add_comment_to_post(post_id, comment)
         return schemas.Post(**post.to_dict())
-    except exceptions.PostNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
@@ -74,7 +70,7 @@ def get_all_posts_for_user(username: str, limit: Optional[int] = None) -> List[s
     try:
         posts_for_user = posts.get_posts_for_user(username, limit)
         return [schemas.Post(**post.to_dict()) for post in posts_for_user]
-    except exceptions.UserNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))

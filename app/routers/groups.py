@@ -12,8 +12,6 @@ router = APIRouter(
 )
 
 
-# TODO add handling of mongo db errors such as non-unique, already exist, invalid format (email, date)
-
 @router.get("/get_by_coor")
 async def explore_groups_by_coor(lat: str, lon: str) -> List[schemas.QueryGroup]:
     try:
@@ -37,7 +35,7 @@ async def get_group_by_id(group_id: str) -> schemas.Group:
     try:
         group = groups.get_group_by_id(group_id)
         return schemas.Group(**group.to_dict())
-    except exceptions.GroupNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
@@ -48,9 +46,7 @@ async def add_user_to_group(query_group: schemas.QueryGroup, username: str) -> s
     try:
         group = groups.add_user_to_group(query_group, username)
         return schemas.Group(**group.to_dict())
-    except exceptions.GroupNotFound as e:
-        raise HTTPException(404, str(e))
-    except exceptions.UserNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
