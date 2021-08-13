@@ -1,40 +1,43 @@
 from typing import Optional, List
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
 from .. import exceptions
 from .. import schemas
 from ..database_crud import posts
+from ..dependencies import verify_logged_in
 
 router = APIRouter(
     prefix="/posts",
-    tags=["posts"]
+    tags=["posts"],
+    responses={404: {"description": "Not found"}},
+    dependencies=[Depends(verify_logged_in)]
 )
 
 
-@router.post("/")
+@router.post("/", response_model=schemas.Post)
 def post_new_post(post: schemas.PostCreate) -> schemas.Post:
     try:
         new_post = posts.create_post(post)
-        return schemas.Post(**new_post.to_dict())
+        return new_post
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/{post_id}")
+@router.get("/{post_id}", response_model=schemas.Post)
 def get_post_by_id(post_id: Optional[str] = None) -> schemas.Post:
     try:
         post = posts.get_post_by_id(post_id)
-        return schemas.Post(**post.to_dict())
+        return post
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/")
+@router.get("/", response_model=List[schemas.Post])
 def get_posts(group_name: Optional[str] = None,
               group_id: Optional[str] = None,
               username: Optional[str] = None) -> List[schemas.Post]:
@@ -47,25 +50,25 @@ def get_posts(group_name: Optional[str] = None,
             found_posts = posts.get_posts_by_group_id(group_id)
         else:  # username is not None:
             found_posts = posts.get_posts_by_user(username)
-        return [schemas.Post(**post.to_dict()) for post in found_posts]
+        return found_posts
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.put("/comment/{post_id}")
+@router.put("/comment/{post_id}", response_model=schemas.Post)
 def add_comment_to_post(post_id: str, comment: schemas.CommentCreate) -> schemas.Post:
     try:
         post = posts.add_comment_to_post(post_id, comment)
-        return schemas.Post(**post.to_dict())
+        return post
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/for_user/{username}")
+@router.get("/for_user/{username}", response_model=List[schemas.Post])
 def get_all_posts_for_user(username: str, limit: Optional[int] = None) -> List[schemas.Post]:
     try:
         posts_for_user = posts.get_posts_for_user(username, limit)

@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 
 from .. import schemas, exceptions
 from ..database_crud import users
-from ..dependencies import get_current_user, get_password_hash
+from ..dependencies import get_current_user, get_password_hash, verify_logged_in
 
 router = APIRouter(
     prefix="/users",
@@ -10,12 +10,12 @@ router = APIRouter(
 )
 
 
-@router.post("/")
+@router.post("/", response_model=schemas.User)
 async def sign_up(user: schemas.UserCreate) -> schemas.User:
     try:
         user.password = get_password_hash(user.password)
         db_user = users.create_user(user)
-        return schemas.User(**db_user.to_dict())
+        return db_user
     except Exception as e:
         raise HTTPException(400, str(e))
 
@@ -23,6 +23,10 @@ async def sign_up(user: schemas.UserCreate) -> schemas.User:
 @router.get("/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/{username}", response_model=schemas.User, responses={404: {"description": "Not found"}},
+            dependencies=[Depends(verify_logged_in)])
 async def get_user(username: str) -> schemas.User:
     try:
         db_user = users.get_user_by_name(username)

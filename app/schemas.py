@@ -33,16 +33,7 @@ class User(UserBase):
         orm_mode = True
 
 
-class LikeBase(BaseModel):
-    username: str
-
-
-class LikeCreate(LikeBase):
-    pass
-
-
-class Like(LikeBase):
-    pass
+Like = str
 
 
 class CommentBase(BaseModel):

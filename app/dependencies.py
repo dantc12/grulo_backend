@@ -53,7 +53,7 @@ def create_access_token(secret_key: str,
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
 
 
-async def get_current_user(token: str = Depends(oauth2_scheme)):
+async def get_current_user(token: str = Depends(oauth2_scheme)) -> models.User:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate credentials",
@@ -72,3 +72,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme)):
     except exceptions.UserNotFound:
         raise credentials_exception
     return user
+
+
+async def verify_logged_in(token: str = Depends(oauth2_scheme)):
+    _ = await get_current_user(token)
