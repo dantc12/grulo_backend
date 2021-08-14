@@ -10,7 +10,7 @@ class Token(BaseModel):
 
 class UserBase(BaseModel):
     username: str
-    email: str
+    email: EmailStr
 
     address: Optional[str]
     first_name: Optional[str]
