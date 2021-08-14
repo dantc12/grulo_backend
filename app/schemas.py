@@ -37,7 +37,6 @@ Like = str
 
 
 class CommentBase(BaseModel):
-    username: str
     text: str
 
 
@@ -46,12 +45,12 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentBase):
+    username: str
     index: int
     likes: List[Like]
 
 
 class PostBase(BaseModel):
-    username: str
     group_name: str
     text: str
 
@@ -61,6 +60,7 @@ class PostCreate(PostBase):
 
 
 class Post(PostBase):
+    username: str
     post_id: str
     post_date: datetime.datetime
     last_update: datetime.datetime
