@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import APIRouter, HTTPException, Depends
 
 from .. import schemas, exceptions
@@ -23,6 +25,12 @@ async def sign_up(user: schemas.UserCreate) -> schemas.User:
 @router.get("/me/", response_model=schemas.User)
 async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
     return current_user
+
+
+@router.get("/search/", response_model=List[schemas.User], dependencies=[Depends(verify_logged_in)])
+async def search_users(username: str) -> List[schemas.User]:
+    possible_matches = users.search_users_containing(username)
+    return possible_matches
 
 
 @router.get("/{username}", response_model=schemas.User, responses={404: {"description": "Not found"}},

@@ -18,6 +18,10 @@ def create_group(group_create: schemas.GroupCreate) -> models.Group:
     return group
 
 
+def search_groups_containing(partial_group_name: str) -> List[models.Group]:
+    return list(models.Group.objects(group_name__icontains=partial_group_name))
+
+
 def get_all_groups() -> List[models.Group]:
     return list(models.Group.objects())
 
