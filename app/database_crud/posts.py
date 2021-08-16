@@ -25,6 +25,8 @@ def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.P
     posted_group = groups.get_group_by_name(group_name=post.group_name)
     if posting_user.username not in posted_group.users:
         raise exceptions.NotMember(posting_user.username, posted_group.group_name)
+    taken_post_ids = [post.post_id for post in models.Post.objects]
+    post_id = 1
     while str(post_id) in taken_post_ids:
         post_id += 1
     post_id = str(post_id)

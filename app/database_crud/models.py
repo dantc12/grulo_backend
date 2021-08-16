@@ -4,12 +4,12 @@ from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
-    ListField,
+    ListField
 )
 
 
 class User(Document):
-    username = StringField(required=True, unique=True)
+    username = StringField(primary_key=True, required=True)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
 
