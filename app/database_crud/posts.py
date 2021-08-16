@@ -43,8 +43,8 @@ def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.P
 
 def get_posts_for_user(user: models.User, limit: Optional[int] = None) -> List[models.Post]:
     posts = []
-    for group_id in user.group_ids:
-        group = groups.get_group_by_id(group_id)
+    for group_name in user.groups:
+        group = groups.get_group_by_name(group_name)
         group_posts = [get_post_by_id(post_id) for post_id in group.post_ids]
         if limit is not None and len(posts) + len(group_posts) > limit:
             i = 0
@@ -64,9 +64,4 @@ def get_posts_by_user(username: str) -> List[models.Post]:
 
 def get_posts_by_group_name(group_name: str) -> List[models.Post]:
     group = groups.get_group_by_name(group_name)
-    return [get_post_by_id(post_id) for post_id in group.post_ids]
-
-
-def get_posts_by_group_id(group_id: str) -> List[models.Post]:
-    group = groups.get_group_by_id(group_id)
     return [get_post_by_id(post_id) for post_id in group.post_ids]

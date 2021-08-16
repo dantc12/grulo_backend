@@ -15,8 +15,8 @@ router = APIRouter(
 
 
 @router.get("/get_by_coor", response_model=List[schemas.QueryGroup])
-async def explore_groups_by_coor(lat: str = "32.08217107033524", lon: str = "34.80586379620104") -> List[
-    schemas.QueryGroup]:
+async def explore_groups_by_coor(lat: str = "32.08217107033524", lon: str = "34.80586379620104") -> \
+        List[schemas.QueryGroup]:
     try:
         places = reverse_geocoder.reverse_geocode(lat, lon)
         return [schemas.QueryGroup(group_name=place.name, group_type=place.type) for place in places]
@@ -33,10 +33,10 @@ async def get_all_groups() -> List[schemas.Group]:
         raise HTTPException(500, str(e))
 
 
-@router.get("/{group_id}", response_model=schemas.Group)
-async def get_group_by_id(group_id: str) -> schemas.Group:
+@router.get("/", response_model=schemas.Group)
+async def get_group_by_name(group_name: str) -> schemas.Group:
     try:
-        group = groups.get_group_by_id(group_id)
+        group = groups.get_group_by_name(group_name)
         return group
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))

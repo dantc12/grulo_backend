@@ -27,7 +27,7 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    group_ids: List[str]
+    groups: List[str]
     post_ids: List[str]
 
     class Config:
@@ -86,7 +86,6 @@ class QueryGroup(GroupBase):
 
 
 class Group(GroupBase):
-    group_id: str
     users: List[str]
     post_ids: List[str]
 
