@@ -4,9 +4,14 @@
     "port": 27017,
     "db": "grulo"
   },
+  "authentication": {
+    "secret_key": "<SECRET_KEY_HERE>",
+    "algorithm": "HS256",
+    "access_token_expire_minutes": 30
+  },
   "reverse_geocoding": {
     "url": "https://maps.googleapis.com/maps/api/geocode/json",
-    "api_key": "",
+    "api_key": "<SECRET_KEY_HERE>",
     "types_map": {
       "street_address": "כתובת",
       "route": "רחוב",

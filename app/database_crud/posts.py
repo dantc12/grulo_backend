@@ -1,7 +1,7 @@
 from typing import List, Optional
 
-from .. import exceptions, schemas, models
-from . import users, groups
+from . import users, groups, models
+from .. import exceptions, schemas
 
 
 def get_post_by_id(post_id: str) -> models.Post:
@@ -10,28 +10,25 @@ def get_post_by_id(post_id: str) -> models.Post:
     raise exceptions.PostNotFound(post_id)
 
 
-# TODO add edit post
-
-
-def add_comment_to_post(post_id: str, comment: schemas.CommentCreate) -> models.Post:
+def add_comment_to_post(post_id: str, comment: schemas.CommentCreate, user: models.User) -> models.Post:
     post = get_post_by_id(post_id)
     created_comment = schemas.Comment(index=len(post.comments),
                                       likes=[],
+                                      username=user.username,
                                       **comment.dict())
     post.comments.append(created_comment.dict())
     post.save()
     return post
 
 
-def create_post(post: schemas.PostCreate) -> models.Post:
-    posting_user = users.get_user_by_name(username=post.username)
+def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.Post:
     posted_group = groups.get_group_by_name(group_name=post.group_name)
     taken_post_ids = [post.post_id for post in models.Post.objects]
     post_id = 1
     while str(post_id) in taken_post_ids:
         post_id += 1
     post_id = str(post_id)
-    post = models.Post(post_id=post_id, **post.dict())
+    post = models.Post(post_id=post_id, username=posting_user.username, **post.dict())
     post.save()
 
     # add to user's posts
@@ -42,8 +39,7 @@ def create_post(post: schemas.PostCreate) -> models.Post:
     return post
 
 
-def get_posts_for_user(username: str, limit: Optional[int] = None) -> List[models.Post]:
-    user = users.get_user_by_name(username)
+def get_posts_for_user(user: models.User, limit: Optional[int] = None) -> List[models.Post]:
     posts = []
     for group_id in user.group_ids:
         group = groups.get_group_by_id(group_id)
@@ -72,5 +68,3 @@ def get_posts_by_group_name(group_name: str) -> List[models.Post]:
 def get_posts_by_group_id(group_id: str) -> List[models.Post]:
     group = groups.get_group_by_id(group_id)
     return [get_post_by_id(post_id) for post_id in group.post_ids]
-
-# TODO add get posts by coordinates

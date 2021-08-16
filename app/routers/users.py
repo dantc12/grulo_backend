@@ -1,33 +1,37 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
-from .. import database
 from .. import schemas, exceptions
 from ..database_crud import users
+from ..dependencies import get_current_user, get_password_hash, verify_logged_in
 
 router = APIRouter(
     prefix="/users",
-    tags=["users"],
-    dependencies=[Depends(database.connect_to_db)]  # TODO add the security part
+    tags=["users"]
 )
 
 
-# TODO add handling of mongo db errors such as non-unique, already exist, invalid format (email, date)
-
-@router.post("/")
+@router.post("/", response_model=schemas.User)
 async def sign_up(user: schemas.UserCreate) -> schemas.User:
     try:
+        user.password = get_password_hash(user.password)
         db_user = users.create_user(user)
-        return schemas.User(**db_user.to_dict())
+        return db_user
     except Exception as e:
         raise HTTPException(400, str(e))
 
 
-@router.get("/{username}")
+@router.get("/me/", response_model=schemas.User)
+async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
+    return current_user
+
+
+@router.get("/{username}", response_model=schemas.User, responses={404: {"description": "Not found"}},
+            dependencies=[Depends(verify_logged_in)])
 async def get_user(username: str) -> schemas.User:
     try:
         db_user = users.get_user_by_name(username)
         return schemas.User(**db_user.to_dict())
-    except exceptions.UserNotFound as e:
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))

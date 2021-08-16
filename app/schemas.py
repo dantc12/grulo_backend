@@ -3,6 +3,11 @@ from typing import Optional, List
 from pydantic import BaseModel
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class UserBase(BaseModel):
     username: str
     email: str
@@ -28,20 +33,10 @@ class User(UserBase):
         orm_mode = True
 
 
-class LikeBase(BaseModel):
-    username: str
-
-
-class LikeCreate(LikeBase):
-    pass
-
-
-class Like(LikeBase):
-    pass
+Like = str
 
 
 class CommentBase(BaseModel):
-    username: str
     text: str
 
 
@@ -50,12 +45,12 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentBase):
+    username: str
     index: int
     likes: List[Like]
 
 
 class PostBase(BaseModel):
-    username: str
     group_name: str
     text: str
 
@@ -65,6 +60,7 @@ class PostCreate(PostBase):
 
 
 class Post(PostBase):
+    username: str
     post_id: str
     post_date: datetime.datetime
     last_update: datetime.datetime

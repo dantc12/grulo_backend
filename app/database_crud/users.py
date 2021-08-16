@@ -1,6 +1,7 @@
 from typing import List
 
-from .. import exceptions, schemas, models
+from .. import exceptions, schemas
+from . import models
 
 
 def get_user_by_name(username: str) -> models.User:

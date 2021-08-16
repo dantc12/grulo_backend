@@ -1,10 +1,8 @@
 from typing import List
 
-from . import users
-from .. import exceptions, models, schemas
+from . import users, models
+from .. import exceptions, schemas
 
-
-# TODO Not done here
 
 def get_group_by_id(group_id: str) -> models.Group:
     if models.Group.objects(group_id=group_id):
@@ -35,8 +33,7 @@ def get_all_groups() -> List[models.Group]:
     return list(models.Group.objects())
 
 
-def add_user_to_group(query_group: schemas.QueryGroup, username: str) -> models.Group:
-    user = users.get_user_by_name(username)
+def add_user_to_group(query_group: schemas.QueryGroup, user: models.User) -> models.Group:
     try:
         group = get_group_by_name(query_group.group_name)
     except exceptions.GroupNotFound:

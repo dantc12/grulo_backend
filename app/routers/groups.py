@@ -1,24 +1,22 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 
-from .. import database
 from .. import schemas, exceptions
-from ..database_crud import groups
-from ..dependencies import reverse_geocoder
-from ..reverse_geocoding import Place
+from ..database_crud import groups, models
+from ..dependencies import verify_logged_in, get_current_user
+from ..globals import reverse_geocoder
 
 router = APIRouter(
     prefix="/groups",
     tags=["groups"],
-    dependencies=[Depends(database.connect_to_db)]  # TODO add the security part
+    dependencies=[Depends(verify_logged_in)]
 )
 
 
-# TODO add handling of mongo db errors such as non-unique, already exist, invalid format (email, date)
-
-@router.get("/get_by_coor")
-async def explore_groups_by_coor(lat: str, lon: str) -> List[schemas.QueryGroup]:
+@router.get("/get_by_coor", response_model=List[schemas.QueryGroup])
+async def explore_groups_by_coor(lat: str = "32.08217107033524", lon: str = "34.80586379620104") -> List[
+    schemas.QueryGroup]:
     try:
         places = reverse_geocoder.reverse_geocode(lat, lon)
         return [schemas.QueryGroup(group_name=place.name, group_type=place.type) for place in places]
@@ -26,34 +24,32 @@ async def explore_groups_by_coor(lat: str, lon: str) -> List[schemas.QueryGroup]
         raise HTTPException(500, str(e))
 
 
-@router.get("/")
+@router.get("/", response_model=List[schemas.Group])
 async def get_all_groups() -> List[schemas.Group]:
     try:
         result_groups = groups.get_all_groups()
-        return [schemas.Group(**result_group.to_dict()) for result_group in result_groups]
+        return result_groups
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/{group_id}")
+@router.get("/{group_id}", response_model=schemas.Group)
 async def get_group_by_id(group_id: str) -> schemas.Group:
     try:
         group = groups.get_group_by_id(group_id)
-        return schemas.Group(**group.to_dict())
-    except exceptions.GroupNotFound as e:
+        return group
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.post("/")
-async def add_user_to_group(query_group: schemas.QueryGroup, username: str) -> schemas.Group:
+@router.post("/", response_model=schemas.Group)
+async def join_group(query_group: schemas.QueryGroup, user: models.User = Depends(get_current_user)) -> schemas.Group:
     try:
-        group = groups.add_user_to_group(query_group, username)
-        return schemas.Group(**group.to_dict())
-    except exceptions.GroupNotFound as e:
-        raise HTTPException(404, str(e))
-    except exceptions.UserNotFound as e:
+        group = groups.add_user_to_group(query_group, user)
+        return group
+    except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
