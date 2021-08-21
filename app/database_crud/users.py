@@ -1,7 +1,7 @@
 from typing import List
 
-from .. import exceptions, schemas
 from . import models
+from .. import exceptions, schemas
 
 
 def get_user_by_name(username: str) -> models.User:
@@ -10,8 +10,8 @@ def get_user_by_name(username: str) -> models.User:
     raise exceptions.UserNotFound(username)
 
 
-def get_all_users() -> List[models.User]:
-    return list(models.User.objects)
+def search_users_containing(partial_username: str) -> List[models.User]:
+    return list(models.User.objects(username__icontains=partial_username))
 
 
 def create_user(user: schemas.UserCreate) -> models.User:

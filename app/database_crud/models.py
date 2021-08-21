@@ -4,12 +4,12 @@ from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
-    ListField,
+    ListField
 )
 
 
 class User(Document):
-    username = StringField(required=True, unique=True)
+    username = StringField(primary_key=True, required=True)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
 
@@ -20,7 +20,7 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
-    group_ids = ListField(StringField(), default=[])
+    groups = ListField(StringField(), default=[])
     post_ids = ListField(StringField(), default=[])
 
     meta = {"collection": "users"}
@@ -53,8 +53,7 @@ class Post(Document):
 
 
 class Group(Document):
-    group_id = StringField(required=True, unique=True)
-    group_name = StringField(required=True, unique=True)
+    group_name = StringField(required=True, primary_key=True)
     group_type = StringField(required=True)
     users = ListField(StringField(), default=[])
     post_ids = ListField(StringField(), default=[])

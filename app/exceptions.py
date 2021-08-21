@@ -16,3 +16,8 @@ class PostNotFound(NotFoundException):
 class GroupNotFound(NotFoundException):
     def __init__(self, group_id: str):
         super().__init__(f"Group {group_id}")
+
+
+class NotMember(Exception):
+    def __init__(self, username: str, group_name: str):
+        super().__init__(f"User {username} not member of group {group_name}.")

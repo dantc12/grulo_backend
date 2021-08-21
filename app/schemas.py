@@ -1,6 +1,7 @@
 import datetime
 from typing import Optional, List
-from pydantic import BaseModel
+
+from pydantic import BaseModel, EmailStr
 
 
 class Token(BaseModel):
@@ -10,7 +11,7 @@ class Token(BaseModel):
 
 class UserBase(BaseModel):
     username: str
-    email: str
+    email: EmailStr
 
     address: Optional[str]
     first_name: Optional[str]
@@ -26,7 +27,7 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    group_ids: List[str]
+    groups: List[str]
     post_ids: List[str]
 
     class Config:
@@ -85,7 +86,6 @@ class QueryGroup(GroupBase):
 
 
 class Group(GroupBase):
-    group_id: str
     users: List[str]
     post_ids: List[str]
 
