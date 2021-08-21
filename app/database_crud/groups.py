@@ -5,14 +5,15 @@ from .. import exceptions, schemas
 
 
 def get_group_by_name(group_name: str) -> models.Group:
-    if models.Group.objects(group_name=group_name):
-        return models.Group.objects(group_name=group_name)[0]
-    raise exceptions.GroupNotFound(group_name)
+    group = models.Group.objects(group_name=group_name).first()
+    if group is None:
+        raise exceptions.GroupNotFound(group_name)
+    return group
 
 
 def create_group(group_create: schemas.GroupCreate) -> models.Group:
-    if models.Group.objects(group_name=group_create.group_name):
-        return models.Group.objects(group_name=group_create.group_name)[0]
+    if models.Group.objects(group_name=group_create.group_name).first() is not None:
+        raise exceptions.GroupAlreadyExists(group_create.group_name)
     group = models.Group(**group_create.dict())
     group.save()
     return group

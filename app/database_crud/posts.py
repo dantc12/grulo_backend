@@ -5,8 +5,9 @@ from .. import exceptions, schemas
 
 
 def get_post_by_id(post_id: str) -> models.Post:
-    if models.Post.objects(post_id=post_id):
-        return models.Post.objects(post_id=post_id)[0]
+    post = models.Post.objects(post_id=post_id).first()
+    if post is not None:
+        return post
     raise exceptions.PostNotFound(post_id)
 
 
