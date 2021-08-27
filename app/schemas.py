@@ -1,5 +1,6 @@
+from decimal import Decimal
 import datetime
-from typing import Optional, List
+from typing import Optional, List, Union
 
 from pydantic import BaseModel, EmailStr
 
@@ -91,3 +92,15 @@ class Group(GroupBase):
 
     class Config:
         orm_mode = True
+
+
+class RangeSearch(BaseModel):
+    min: int = 0
+    max: Optional[int] = None
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "min": 0
+            }
+        }

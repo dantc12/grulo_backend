@@ -42,19 +42,10 @@ def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.P
     return post
 
 
-def get_posts_for_user(user: models.User, limit: Optional[int] = None) -> List[models.Post]:
+def get_user_feed(user: models.User) -> List[models.Post]:
     posts = []
     for group_name in user.groups:
-        group = groups.get_group_by_name(group_name)
-        group_posts = [get_post_by_id(post_id) for post_id in group.post_ids]
-        if limit is not None and len(posts) + len(group_posts) > limit:
-            i = 0
-            while len(posts) < limit:
-                posts.append(group_posts[i])
-                i += 1
-            return posts
-        else:
-            posts.extend(group_posts)
+        posts.extend(get_posts_by_group_name(group_name))
     return posts
 
 

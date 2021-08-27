@@ -69,12 +69,16 @@ def add_comment_to_post(post_id: str, comment: schemas.CommentCreate,
         raise HTTPException(500, str(e))
 
 
-@router.get("/feed/", response_model=List[schemas.Post])
-def get_all_posts_from_groups_of_user(limit: Optional[int] = None, user: models.User = Depends(get_current_user)) -> \
+@router.post("/feed/", response_model=List[schemas.Post])
+def get_user_feed(range: schemas.RangeSearch, user: models.User = Depends(get_current_user)) -> \
         List[schemas.Post]:
     try:
-        posts_for_user = posts.get_posts_for_user(user, limit)
-        return posts_for_user
+        posts_for_user = posts.get_user_feed(user)
+        sorted_posts = sorted(posts_for_user, key=lambda x: x.last_update)[::-1]
+        if range.max is not None:
+            return sorted_posts[range.min:range.max]
+        else:
+            return sorted_posts[range.min:]
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
