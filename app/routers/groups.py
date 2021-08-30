@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 
-@router.get("/get_by_coor", response_model=List[schemas.QueryGroup])
+@router.get("/explore", response_model=List[schemas.QueryGroup])
 async def explore_groups_by_coor(lat: str = "32.08217107033524", lon: str = "34.80586379620104") -> \
         List[schemas.QueryGroup]:
     try:
