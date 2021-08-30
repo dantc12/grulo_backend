@@ -4,7 +4,8 @@ from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
-    ListField
+    ListField,
+    ObjectIdField
 )
 
 
@@ -20,8 +21,8 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
-    groups = ListField(StringField(), default=[])
-    posts = ListField(StringField(), default=[])
+    groups = ListField(ObjectIdField(), default=[])
+    posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "users"}
 
@@ -33,8 +34,8 @@ class User(Document):
 
 
 class Post(Document):
-    username = StringField(required=True)  # posting user
-    group_name = StringField(required=True)  # the group being posted on
+    user = ObjectIdField(required=True)  # posting user
+    group = ObjectIdField(required=True)  # the group being posted on
     text = StringField(required=True)
     post_date = DateTimeField(default=datetime.datetime.now)
     last_update = DateTimeField(default=datetime.datetime.now)
@@ -45,7 +46,7 @@ class Post(Document):
     meta = {"collection": "posts"}
 
     def to_dict(self) -> dict:
-        return self.to_mongo(use_db_field=False).to_dict()
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
@@ -54,8 +55,8 @@ class Post(Document):
 class Group(Document):
     group_name = StringField(unique=True, required=True)
     group_type = StringField(required=True)
-    users = ListField(StringField(), default=[])
-    posts = ListField(StringField(), default=[])
+    users = ListField(ObjectIdField(), default=[])
+    posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "groups"}
 

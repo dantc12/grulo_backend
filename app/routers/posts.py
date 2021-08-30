@@ -19,48 +19,28 @@ router = APIRouter(
 @router.post("/", response_model=schemas.Post)
 def post_new_post(post: schemas.PostCreate, user: models.User = Depends(get_current_user)) -> schemas.Post:
     try:
-        new_post = posts.create_post(post, user)
-        return new_post
+        return posts.create_post(post, user)
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/{post_id}", response_model=schemas.Post)
-def get_post_by_id(post_id: Optional[str] = None) -> schemas.Post:
+@router.get("/", response_model=schemas.Post)
+def get_post_by_id(id: str) -> schemas.Post:
     try:
-        post = posts.get_post_by_id(post_id)
-        return post
+        return posts.get_post_by_id(id)
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.get("/", response_model=List[schemas.Post])
-def get_posts_by_identifier(group_name: Optional[str] = None,
-                            username: Optional[str] = None) -> List[schemas.Post]:
-    if group_name is None and username is None:
-        raise HTTPException(400, "Must use an identifier for query.")
-    try:
-        if group_name is not None:
-            found_posts = posts.get_posts_by_group_name(group_name)
-        else:  # username is not None:
-            found_posts = posts.get_posts_by_user(username)
-        return found_posts
-    except exceptions.NotFoundException as e:
-        raise HTTPException(404, str(e))
-    except Exception as e:
-        raise HTTPException(500, str(e))
-
-
-@router.put("/comment/{post_id}", response_model=schemas.Post)
-def add_comment_to_post(post_id: str, comment: schemas.CommentCreate,
+@router.put("/{id}/comment", response_model=schemas.Post)
+def add_comment_to_post(id: str, comment: schemas.CommentCreate,
                         user: models.User = Depends(get_current_user)) -> schemas.Post:
     try:
-        post = posts.add_comment_to_post(post_id, comment, user)
-        return post
+        return posts.add_comment_to_post(id, comment, user)
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
@@ -94,7 +74,7 @@ def explore_posts_by_coor(start: int = 0, end: Optional[int] = None, lat: str = 
                 existing_groups.append(groups.get_group_by_name(place.name))
             except exceptions.NotFoundException:
                 continue
-        posts_for_user = [post for group in existing_groups for post in posts.get_posts_by_group_name(group.group_name)]
+        posts_for_user = [post for group in existing_groups for post in posts.get_posts_of_group(str(group.id))]
         sorted_posts = sorted(posts_for_user, key=lambda x: x.last_update)[::-1]
         if end is None:
             return sorted_posts[start:]

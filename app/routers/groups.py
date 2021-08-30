@@ -3,7 +3,7 @@ from typing import List, Optional
 from fastapi import APIRouter, HTTPException, Depends
 
 from .. import schemas, exceptions
-from ..database_crud import groups, models
+from ..database_crud import groups, models, posts
 from ..dependencies import verify_logged_in, get_current_user
 from ..globals import reverse_geocoder
 
@@ -60,6 +60,18 @@ async def join_group(query_group: schemas.QueryGroup, user: models.User = Depend
     try:
         group = groups.add_user_to_group(query_group, user)
         return group
+    except exceptions.NotFoundException as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@router.get("/{id}/posts", response_model=List[schemas.Post], responses={404: {"description": "Not found"}},
+            dependencies=[Depends(verify_logged_in)])
+async def get_posts_of_group(id: str):
+    try:
+        group = groups.get_group_by_id(id)
+        return posts.get_posts_of_group(str(group.id))
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:

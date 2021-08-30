@@ -54,9 +54,11 @@ class UserCreate(UserBase):
 
 class User(UserBase):
     id: OID = Field()
-    groups: List[str]
-    posts: List[str]
+    groups: List[OID]
+    posts: List[OID]
 
+
+# ------------------ POSTS ------------------
 
 Like = str
 
@@ -70,13 +72,13 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentBase):
-    username: str
+    user: OID = Field()
     index: int
     likes: List[Like]
 
 
-class PostBase(BaseModel):
-    group_name: str
+class PostBase(BaseMongoModel):
+    group: OID = Field()
     text: str
 
 
@@ -85,15 +87,13 @@ class PostCreate(PostBase):
 
 
 class Post(PostBase):
-    username: str
-    post_id: str
+    id: OID = Field()
+    user: OID = Field()
     post_date: datetime
     last_update: datetime
     comments: List[Comment]
     likes: List[Like]
 
-    class Config:
-        orm_mode = True
 
 # ------------------ GROUPS ------------------
 
@@ -112,5 +112,5 @@ class QueryGroup(GroupBase):
 
 class Group(GroupBase):
     id: OID = Field()
-    users: List[str]
-    posts: List[str]
+    users: List[OID]
+    posts: List[OID]

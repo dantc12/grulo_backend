@@ -39,8 +39,8 @@ def add_user_to_group(query_group: schemas.QueryGroup, user: models.User) -> mod
         group = get_group_by_name(query_group.group_name)
     except exceptions.GroupNotFound:
         group = create_group(schemas.GroupCreate(**query_group.dict()))
-    if str(user.id) not in group.users:
-        user.update(groups=user.groups + [str(group.id)])
-        group.users = group.users + [str(user.id)]
+    if user.id not in group.users:
+        user.update(groups=user.groups + [group.id])
+        group.users = group.users + [user.id]
         group.save()
     return group
