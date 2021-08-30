@@ -28,11 +28,20 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
+    id: str = Field()
     groups: List[str]
     post_ids: List[str]
 
-    class Config:
-        orm_mode = True
+    # @validator('id')
+    # def object_id_to_str(cls, v):
+    #     return str(v)
+
+    # class Config:
+    #     # orm_mode = True
+    #     json_encoders = {
+    #         datetime: lambda dt: dt.isoformat(),
+    #         ObjectId: lambda oid: str(oid),
+    #     }
 
 
 Like = str
@@ -92,15 +101,3 @@ class Group(GroupBase):
 
     class Config:
         orm_mode = True
-
-
-class RangeSearch(BaseModel):
-    min: int = 0
-    max: Optional[int] = None
-
-    class Config:
-        schema_extra = {
-            "example": {
-                "min": 0
-            }
-        }

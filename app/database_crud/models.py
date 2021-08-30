@@ -9,7 +9,7 @@ from mongoengine import (
 
 
 class User(Document):
-    username = StringField(primary_key=True, required=True)
+    username = StringField(unique=True, required=True)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
 
@@ -25,8 +25,11 @@ class User(Document):
 
     meta = {"collection": "users"}
 
-    def to_dict(self):
-        return self.to_mongo(use_db_field=False).to_dict()
+    def to_dict(self) -> dict:
+        d = self.to_mongo().to_dict()
+        d["id"] = str(d["_id"])
+        del d["_id"]
+        return d
 
     def __str__(self):
         return str(self.to_dict())
@@ -45,7 +48,7 @@ class Post(Document):
 
     meta = {"collection": "posts"}
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return self.to_mongo(use_db_field=False).to_dict()
 
     def __str__(self):
@@ -60,7 +63,7 @@ class Group(Document):
 
     meta = {"collection": "groups"}
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         return self.to_mongo(use_db_field=False).to_dict()
 
     def __str__(self):

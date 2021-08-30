@@ -3,7 +3,7 @@ from typing import List
 from fastapi import APIRouter, HTTPException, Depends
 
 from .. import schemas, exceptions
-from ..database_crud import users
+from ..database_crud import users, models
 from ..dependencies import get_current_user, get_password_hash, verify_logged_in
 
 router = APIRouter(
@@ -23,8 +23,8 @@ async def sign_up(user: schemas.UserCreate) -> schemas.User:
 
 
 @router.get("/me/", response_model=schemas.User)
-async def read_users_me(current_user: schemas.User = Depends(get_current_user)):
-    return current_user
+async def read_users_me(current_user: models.User = Depends(get_current_user)):
+    return current_user.to_dict()
 
 
 @router.get("/search/", response_model=List[schemas.User], dependencies=[Depends(verify_logged_in)])
@@ -38,7 +38,7 @@ async def search_users(username: str) -> List[schemas.User]:
 async def get_user(username: str) -> schemas.User:
     try:
         db_user = users.get_user_by_name(username)
-        return schemas.User(**db_user.to_dict())
+        return db_user
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
