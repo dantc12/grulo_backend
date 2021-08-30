@@ -24,7 +24,8 @@ async def sign_up(user: schemas.UserCreate) -> schemas.User:
 
 @router.get("/me/", response_model=schemas.User)
 async def read_users_me(current_user: models.User = Depends(get_current_user)):
-    return current_user.to_dict()
+    return current_user
+    # return schemas.User(**current_user.to_dict())
 
 
 @router.get("/search/", response_model=List[schemas.User], dependencies=[Depends(verify_logged_in)])

@@ -1,8 +1,31 @@
-from decimal import Decimal
-import datetime
-from typing import Optional, List, Union
+from datetime import datetime
+from typing import Optional, List
 
-from pydantic import BaseModel, EmailStr
+from bson import ObjectId
+from bson.errors import InvalidId
+from pydantic import BaseModel, EmailStr, Field, BaseConfig
+
+
+class OID(str):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        try:
+            return ObjectId(str(v))
+        except InvalidId:
+            raise ValueError("Not a valid ObjectId")
+
+
+class BaseMongoModel(BaseModel):
+    class Config(BaseConfig):
+        orm_mode = True
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat(),
+            ObjectId: lambda oid: str(oid),
+        }
 
 
 class Token(BaseModel):
@@ -10,14 +33,14 @@ class Token(BaseModel):
     token_type: str
 
 
-class UserBase(BaseModel):
+class UserBase(BaseMongoModel):
     username: str
     email: EmailStr
 
     address: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
-    birthday: Optional[datetime.datetime]
+    birthday: Optional[datetime]
     phone: Optional[str]
     gender: Optional[str]
     bio: Optional[str]
@@ -28,20 +51,9 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    id: str = Field()
+    id: OID = Field()
     groups: List[str]
     post_ids: List[str]
-
-    # @validator('id')
-    # def object_id_to_str(cls, v):
-    #     return str(v)
-
-    # class Config:
-    #     # orm_mode = True
-    #     json_encoders = {
-    #         datetime: lambda dt: dt.isoformat(),
-    #         ObjectId: lambda oid: str(oid),
-    #     }
 
 
 Like = str
@@ -73,8 +85,8 @@ class PostCreate(PostBase):
 class Post(PostBase):
     username: str
     post_id: str
-    post_date: datetime.datetime
-    last_update: datetime.datetime
+    post_date: datetime
+    last_update: datetime
     comments: List[Comment]
     likes: List[Like]
 
