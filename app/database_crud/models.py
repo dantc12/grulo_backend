@@ -52,15 +52,15 @@ class Post(Document):
 
 
 class Group(Document):
-    group_name = StringField(required=True, primary_key=True)
+    group_name = StringField(unique=True, required=True)
     group_type = StringField(required=True)
     users = ListField(StringField(), default=[])
-    post_ids = ListField(StringField(), default=[])
+    posts = ListField(StringField(), default=[])
 
     meta = {"collection": "groups"}
 
     def to_dict(self) -> dict:
-        return self.to_mongo(use_db_field=False).to_dict()
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())

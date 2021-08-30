@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 
 from fastapi import APIRouter, HTTPException, Depends
 
@@ -34,18 +34,23 @@ async def get_all_groups() -> List[schemas.Group]:
 
 
 @router.get("/", response_model=schemas.Group)
-async def get_group_by_name(group_name: str) -> schemas.Group:
+async def get_group(id: Optional[str] = None, group_name: Optional[str] = None) -> schemas.Group:
     try:
-        group = groups.get_group_by_name(group_name)
-        return group
+        if id is not None:
+            return groups.get_group_by_id(id)
+        if group_name is not None:
+            return groups.get_group_by_name(group_name)
+        raise exceptions.BadInput()
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
+    except exceptions.BadInput as e:
+        raise HTTPException(400, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
 @router.get("/search/", response_model=List[schemas.Group])
-async def search_users(group_name: str) -> List[schemas.Group]:
+async def search_groups(group_name: str) -> List[schemas.Group]:
     possible_matches = groups.search_groups_containing(group_name)
     return possible_matches
 

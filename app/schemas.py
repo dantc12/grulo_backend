@@ -95,8 +95,9 @@ class Post(PostBase):
     class Config:
         orm_mode = True
 
+# ------------------ GROUPS ------------------
 
-class GroupBase(BaseModel):
+class GroupBase(BaseMongoModel):
     group_name: str
     group_type: str
 
@@ -110,8 +111,6 @@ class QueryGroup(GroupBase):
 
 
 class Group(GroupBase):
+    id: OID = Field()
     users: List[str]
-    post_ids: List[str]
-
-    class Config:
-        orm_mode = True
+    posts: List[str]
