@@ -33,6 +33,8 @@ class Token(BaseModel):
     token_type: str
 
 
+# ------------------ USERS ------------------
+
 class UserBase(BaseMongoModel):
     username: str
     email: EmailStr
@@ -53,7 +55,7 @@ class UserCreate(UserBase):
 class User(UserBase):
     id: OID = Field()
     groups: List[str]
-    post_ids: List[str]
+    posts: List[str]
 
 
 Like = str

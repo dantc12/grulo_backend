@@ -11,6 +11,13 @@ def get_user_by_name(username: str) -> models.User:
     return user
 
 
+def get_user_by_id(id: str) -> models.User:
+    user = models.User.objects(id=id).first()
+    if user is None:
+        raise exceptions.UserNotFound(id)
+    return user
+
+
 def search_users_containing(partial_username: str) -> List[models.User]:
     return list(models.User.objects(username__icontains=partial_username))
 

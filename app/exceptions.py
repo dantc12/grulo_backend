@@ -41,3 +41,8 @@ class GroupAlreadyExists(NotFoundException):
 class NotMember(Exception):
     def __init__(self, username: str, group_name: str):
         super().__init__(f"User {username} not member of group {group_name}.")
+
+
+class BadInput(Exception):
+    def __init__(self):
+        super().__init__(f"Received bad input.")

@@ -21,27 +21,23 @@ class User(Document):
     gender = StringField()
     bio = StringField()
     groups = ListField(StringField(), default=[])
-    post_ids = ListField(StringField(), default=[])
+    posts = ListField(StringField(), default=[])
 
     meta = {"collection": "users"}
 
     def to_dict(self) -> dict:
-        d = self.to_mongo().to_dict()
-        d["id"] = str(d["_id"])
-        del d["_id"]
-        return d
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
 
 class Post(Document):
-    post_id = StringField(required=True, unique=True)
     username = StringField(required=True)  # posting user
     group_name = StringField(required=True)  # the group being posted on
     text = StringField(required=True)
-    post_date = DateTimeField(default=datetime.datetime.utcnow)
-    last_update = DateTimeField(default=datetime.datetime.utcnow)
+    post_date = DateTimeField(default=datetime.datetime.now)
+    last_update = DateTimeField(default=datetime.datetime.now)
 
     likes = ListField(default=[])
     comments = ListField(default=[])
