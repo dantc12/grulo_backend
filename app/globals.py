@@ -16,6 +16,7 @@ def _load_config() -> dict:
 
 app_config = _load_config()
 mongo_config = app_config.get("db")
+queried_groups_expiration = mongo_config.pop("queried_groups_expiration")
 authentication_config = app_config.get("authentication")
 reverse_geocoding_config = app_config.get("reverse_geocoding")
 

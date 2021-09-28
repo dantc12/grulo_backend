@@ -18,6 +18,11 @@ class GroupNotFound(NotFoundException):
         super().__init__(f"Group {group_id}")
 
 
+class QueriedGroupNotFound(NotFoundException):
+    def __init__(self, group_id: str):
+        super().__init__(f"Queried Group {group_id}")
+
+
 class AlreadyExistsException(Exception):
     def __init__(self, name: str):
         super().__init__(f"{name} already exists.")

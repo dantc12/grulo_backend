@@ -8,6 +8,8 @@ from mongoengine import (
     ObjectIdField
 )
 
+from app import globals
+
 
 class User(Document):
     username = StringField(unique=True, required=True)
@@ -59,6 +61,28 @@ class Group(Document):
     posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "groups"}
+
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+
+class QueriedGroup(Document):
+    created = DateTimeField(default=datetime.datetime.utcnow)
+    group_name = StringField(unique=True, required=True)
+    group_type = StringField(required=True)
+
+    meta = {
+        "indexes": [
+            {
+                "fields": ["created"],
+                "expireAfterSeconds": globals.queried_groups_expiration
+            }
+        ],
+        "collection": "queried_groups"
+    }
 
     def to_dict(self) -> dict:
         return self.to_mongo().to_dict()

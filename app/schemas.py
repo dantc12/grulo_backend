@@ -106,7 +106,7 @@ class GroupCreate(GroupBase):
     pass
 
 
-class QueryGroup(GroupBase):
+class QueriedGroup(GroupBase):
     pass
 
 

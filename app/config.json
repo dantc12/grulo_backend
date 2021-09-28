@@ -3,6 +3,7 @@
     "host": "127.0.0.1",
     "port": 27017,
     "db": "grulo"
+    "queried_groups_expiration": 60
   },
   "authentication": {
     "secret_key": "<SECRET_KEY_HERE>",
