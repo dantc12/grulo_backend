@@ -4,12 +4,13 @@ from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
-    ListField
+    ListField,
+    ObjectIdField
 )
 
 
 class User(Document):
-    username = StringField(primary_key=True, required=True)
+    username = StringField(unique=True, required=True)
     email = EmailField(required=True, unique=True)
     password = StringField(required=True)
 
@@ -20,48 +21,47 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
-    groups = ListField(StringField(), default=[])
-    post_ids = ListField(StringField(), default=[])
+    groups = ListField(ObjectIdField(), default=[])
+    posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "users"}
 
-    def to_dict(self):
-        return self.to_mongo(use_db_field=False).to_dict()
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
 
 class Post(Document):
-    post_id = StringField(required=True, unique=True)
-    username = StringField(required=True)  # posting user
-    group_name = StringField(required=True)  # the group being posted on
+    user = ObjectIdField(required=True)  # posting user
+    group = ObjectIdField(required=True)  # the group being posted on
     text = StringField(required=True)
-    post_date = DateTimeField(default=datetime.datetime.utcnow)
-    last_update = DateTimeField(default=datetime.datetime.utcnow)
+    post_date = DateTimeField(default=datetime.datetime.now)
+    last_update = DateTimeField(default=datetime.datetime.now)
 
     likes = ListField(default=[])
     comments = ListField(default=[])
 
     meta = {"collection": "posts"}
 
-    def to_dict(self):
-        return self.to_mongo(use_db_field=False).to_dict()
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())
 
 
 class Group(Document):
-    group_name = StringField(required=True, primary_key=True)
+    group_name = StringField(unique=True, required=True)
     group_type = StringField(required=True)
-    users = ListField(StringField(), default=[])
-    post_ids = ListField(StringField(), default=[])
+    users = ListField(ObjectIdField(), default=[])
+    posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "groups"}
 
-    def to_dict(self):
-        return self.to_mongo(use_db_field=False).to_dict()
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
 
     def __str__(self):
         return str(self.to_dict())

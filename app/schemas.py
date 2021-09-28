@@ -1,7 +1,31 @@
-import datetime
+from datetime import datetime
 from typing import Optional, List
 
-from pydantic import BaseModel, EmailStr
+from bson import ObjectId
+from bson.errors import InvalidId
+from pydantic import BaseModel, EmailStr, Field, BaseConfig
+
+
+class OID(str):
+    @classmethod
+    def __get_validators__(cls):
+        yield cls.validate
+
+    @classmethod
+    def validate(cls, v):
+        try:
+            return ObjectId(str(v))
+        except InvalidId:
+            raise ValueError("Not a valid ObjectId")
+
+
+class BaseMongoModel(BaseModel):
+    class Config(BaseConfig):
+        orm_mode = True
+        json_encoders = {
+            datetime: lambda dt: dt.isoformat(),
+            ObjectId: lambda oid: str(oid),
+        }
 
 
 class Token(BaseModel):
@@ -9,14 +33,16 @@ class Token(BaseModel):
     token_type: str
 
 
-class UserBase(BaseModel):
+# ------------------ USERS ------------------
+
+class UserBase(BaseMongoModel):
     username: str
     email: EmailStr
 
     address: Optional[str]
     first_name: Optional[str]
     last_name: Optional[str]
-    birthday: Optional[datetime.datetime]
+    birthday: Optional[datetime]
     phone: Optional[str]
     gender: Optional[str]
     bio: Optional[str]
@@ -27,12 +53,12 @@ class UserCreate(UserBase):
 
 
 class User(UserBase):
-    groups: List[str]
-    post_ids: List[str]
+    id: OID = Field()
+    groups: List[OID]
+    posts: List[OID]
 
-    class Config:
-        orm_mode = True
 
+# ------------------ POSTS ------------------
 
 Like = str
 
@@ -46,13 +72,13 @@ class CommentCreate(CommentBase):
 
 
 class Comment(CommentBase):
-    username: str
+    user: OID = Field()
     index: int
     likes: List[Like]
 
 
-class PostBase(BaseModel):
-    group_name: str
+class PostBase(BaseMongoModel):
+    group: OID = Field()
     text: str
 
 
@@ -61,18 +87,17 @@ class PostCreate(PostBase):
 
 
 class Post(PostBase):
-    username: str
-    post_id: str
-    post_date: datetime.datetime
-    last_update: datetime.datetime
+    id: OID = Field()
+    user: OID = Field()
+    post_date: datetime
+    last_update: datetime
     comments: List[Comment]
     likes: List[Like]
 
-    class Config:
-        orm_mode = True
 
+# ------------------ GROUPS ------------------
 
-class GroupBase(BaseModel):
+class GroupBase(BaseMongoModel):
     group_name: str
     group_type: str
 
@@ -86,8 +111,6 @@ class QueryGroup(GroupBase):
 
 
 class Group(GroupBase):
-    users: List[str]
-    post_ids: List[str]
-
-    class Config:
-        orm_mode = True
+    id: OID = Field()
+    users: List[OID]
+    posts: List[OID]
