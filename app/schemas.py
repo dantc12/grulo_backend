@@ -60,7 +60,7 @@ class User(UserBase):
 
 # ------------------ POSTS ------------------
 
-Like = str
+Like = OID
 
 
 class CommentBase(BaseModel):

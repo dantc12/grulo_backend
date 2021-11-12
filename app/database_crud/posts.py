@@ -22,6 +22,22 @@ def add_comment_to_post(post_id: str, comment: schemas.CommentCreate, user: mode
     return post
 
 
+def like_post(post_id: str, user: models.User) -> models.Post:
+    post = get_post_by_id(post_id)
+    if user.id not in post.likes:
+        post.likes.append(user.id)
+        post.save()
+    return post
+
+
+def unlike_post(post_id: str, user: models.User) -> models.Post:
+    post = get_post_by_id(post_id)
+    if user.id in post.likes:
+        post.likes.remove(user.id)
+        post.save()
+    return post
+
+
 def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.Post:
     posted_group = groups.get_group_by_id(post.group)
     if posting_user.id not in posted_group.users:

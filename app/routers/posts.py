@@ -47,6 +47,26 @@ def add_comment_to_post(id: str, comment: schemas.CommentCreate,
         raise HTTPException(500, str(e))
 
 
+@router.put("/{id}/like", response_model=schemas.Post)
+def like_post(id: str, user: models.User = Depends(get_current_user)) -> schemas.Post:
+    try:
+        return posts.like_post(id, user)
+    except exceptions.NotFoundException as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@router.put("/{id}/unlike", response_model=schemas.Post)
+def like_post(id: str, user: models.User = Depends(get_current_user)) -> schemas.Post:
+    try:
+        return posts.unlike_post(id, user)
+    except exceptions.NotFoundException as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.post("/feed/", response_model=List[schemas.Post])
 def get_user_feed(start: int = 0, end: Optional[int] = None, user: models.User = Depends(get_current_user)) -> \
         List[schemas.Post]:
