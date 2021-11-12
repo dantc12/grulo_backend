@@ -1,0 +1,24 @@
+{
+  "db": {
+    "host": "127.0.0.1",
+    "port": 27017,
+    "db": "grulo"
+  },
+  "authentication": {
+    "secret_key": "<SECRET_KEY_HERE>",
+    "algorithm": "HS256",
+    "access_token_expire_minutes": 30
+  },
+  "reverse_geocoding": {
+    "url": "https://maps.googleapis.com/maps/api/geocode/json",
+    "api_key": "<SECRET_KEY_HERE>",
+    "types_map": {
+      "street_address": "כתובת",
+      "route": "רחוב",
+      "country": "מדינה",
+      "locality": "עיר",
+      "administrative_area_level_1": "מחוז"
+    },
+    "supported_country": "ישראל"
+  }
+}
