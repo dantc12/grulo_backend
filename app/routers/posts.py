@@ -58,7 +58,7 @@ def like_post(id: str, user: models.User = Depends(get_current_user)) -> schemas
 
 
 @router.put("/{id}/unlike", response_model=schemas.Post)
-def like_post(id: str, user: models.User = Depends(get_current_user)) -> schemas.Post:
+def unlike_post(id: str, user: models.User = Depends(get_current_user)) -> schemas.Post:
     try:
         return posts.unlike_post(id, user)
     except exceptions.NotFoundException as e:
