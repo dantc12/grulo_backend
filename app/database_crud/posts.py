@@ -27,6 +27,9 @@ def like_post(post_id: str, user: models.User) -> models.Post:
     if user.id not in post.likes:
         post.likes.append(user.id)
         post.save()
+        posting_user = users.get_user_by_id(post.user)
+        posting_user.likes_counter += 1
+        posting_user.save()
     return post
 
 
@@ -35,6 +38,9 @@ def unlike_post(post_id: str, user: models.User) -> models.Post:
     if user.id in post.likes:
         post.likes.remove(user.id)
         post.save()
+        posting_user = users.get_user_by_id(post.user)
+        posting_user.likes_counter -= 1
+        posting_user.save()
     return post
 
 
@@ -42,9 +48,13 @@ def like_comment_of_post(post_id: str, comment_index: int, user: models.User) ->
     post = get_post_by_id(post_id)
     if not 0 <= comment_index < len(post.comments):
         raise exceptions.PostCommentNotFound(post_id, comment_index)
-    if user.id not in post.comments[comment_index].likes:
-        post.comments[comment_index].likes.append(user.id)
+    comment = post.comments[comment_index]
+    if user.id not in comment.likes:
+        comment.likes.append(user.id)
         post.save()
+        posting_user = users.get_user_by_id(comment.user)
+        posting_user.likes_counter += 1
+        posting_user.save()
     return post
 
 
@@ -52,9 +62,13 @@ def unlike_comment_of_post(post_id: str, comment_index: int, user: models.User) 
     post = get_post_by_id(post_id)
     if not 0 <= comment_index < len(post.comments):
         raise exceptions.PostCommentNotFound(post_id, comment_index)
-    if user.id in post.comments[comment_index].likes:
-        post.comments[comment_index].likes.remove(user.id)
+    comment = post.comments[comment_index]
+    if user.id in comment.likes:
+        comment.likes.remove(user.id)
         post.save()
+        posting_user = users.get_user_by_id(comment.user)
+        posting_user.likes_counter -= 1
+        posting_user.save()
     return post
 
 

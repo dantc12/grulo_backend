@@ -24,8 +24,11 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
+
     groups = ListField(ObjectIdField(), default=[])
     posts = ListField(ObjectIdField(), default=[])
+
+    likes_counter = IntField(default=0)
 
     meta = {"collection": "users"}
 

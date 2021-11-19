@@ -56,6 +56,7 @@ class User(UserBase):
     id: OID = Field()
     groups: List[OID]
     posts: List[OID]
+    likes_counter: int
 
 
 # ------------------ POSTS ------------------
