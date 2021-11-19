@@ -62,3 +62,13 @@ def add_user_to_group(query_group: schemas.QueriedGroup, user: models.User) -> m
         group.users = group.users + [user.id]
         group.save()
     return group
+
+
+def leave_group(group_id: str, user: models.User) -> models.Group:
+    group = get_group_by_id(group_id)
+    if user.id in group.users:
+        user.groups.remove(group.id)
+        user.save()
+        group.users.remove(user.id)
+        group.save()
+    return group

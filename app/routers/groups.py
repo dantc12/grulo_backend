@@ -68,6 +68,17 @@ async def join_group(query_group: schemas.QueriedGroup, user: models.User = Depe
         raise HTTPException(500, str(e))
 
 
+@router.post("/{id}/leave", response_model=schemas.Group)
+async def leave_group(id: str, user: models.User = Depends(get_current_user)) -> schemas.Group:
+    try:
+        group = groups.leave_group(id, user)
+        return group
+    except exceptions.NotFoundException as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.get("/{id}/posts", response_model=List[schemas.Post], responses={404: {"description": "Not found"}},
             dependencies=[Depends(verify_logged_in)])
 async def get_posts_of_group(id: str):

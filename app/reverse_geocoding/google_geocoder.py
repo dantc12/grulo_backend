@@ -47,6 +47,8 @@ class GoogleGeocoder(ReverseGeocoder):
             "language": "iw"
         })
         response.raise_for_status()
+        # TODO
+        # When quota issue is fixed, see what is the good case where the API is working, and handle errors here
         google_results = response.json().get("results")
         places = set()
         for result in google_results:
