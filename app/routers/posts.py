@@ -89,7 +89,7 @@ def unlike_post(id: str, user: models.User = Depends(get_current_user)) -> schem
         raise HTTPException(500, str(e))
 
 
-@router.post("/feed/", response_model=List[schemas.Post])
+@router.get("/feed/", response_model=List[schemas.Post])
 def get_user_feed(start: int = 0, end: Optional[int] = None, user: models.User = Depends(get_current_user)) -> \
         List[schemas.Post]:
     try:
@@ -104,7 +104,7 @@ def get_user_feed(start: int = 0, end: Optional[int] = None, user: models.User =
         raise HTTPException(500, str(e))
 
 
-@router.post("/explore/", response_model=List[schemas.Post])
+@router.get("/explore/", response_model=List[schemas.Post])
 def explore_posts_by_coor(start: int = 0, end: Optional[int] = None, lat: str = "32.08217107033524",
                           lon: str = "34.80586379620104") -> \
         List[schemas.Post]:
