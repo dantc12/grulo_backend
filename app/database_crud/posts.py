@@ -38,6 +38,26 @@ def unlike_post(post_id: str, user: models.User) -> models.Post:
     return post
 
 
+def like_comment_of_post(post_id: str, comment_index: int, user: models.User) -> models.Post:
+    post = get_post_by_id(post_id)
+    if not 0 <= comment_index < len(post.comments):
+        raise exceptions.PostCommentNotFound(post_id, comment_index)
+    if user.id not in post.comments[comment_index].likes:
+        post.comments[comment_index].likes.append(user.id)
+        post.save()
+    return post
+
+
+def unlike_comment_of_post(post_id: str, comment_index: int, user: models.User) -> models.Post:
+    post = get_post_by_id(post_id)
+    if not 0 <= comment_index < len(post.comments):
+        raise exceptions.PostCommentNotFound(post_id, comment_index)
+    if user.id in post.comments[comment_index].likes:
+        post.comments[comment_index].likes.remove(user.id)
+        post.save()
+    return post
+
+
 def create_post(post: schemas.PostCreate, posting_user: models.User) -> models.Post:
     posted_group = groups.get_group_by_id(post.group)
     if posting_user.id not in posted_group.users:

@@ -13,6 +13,11 @@ class PostNotFound(NotFoundException):
         super().__init__(f"Post {post_id}")
 
 
+class PostCommentNotFound(NotFoundException):
+    def __init__(self, post_id: str, comment_index: int):
+        super().__init__(f"Comment at index {comment_index} of post {post_id}")
+
+
 class GroupNotFound(NotFoundException):
     def __init__(self, group_id: str):
         super().__init__(f"Group {group_id}")
