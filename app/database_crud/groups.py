@@ -35,8 +35,13 @@ def get_all_groups() -> List[models.Group]:
 
 
 def save_queried_groups(queried_groups: List[schemas.QueriedGroup]) -> None:
+    # TODO
+    # Need to change this. Either searching for an existing groups increases it's created and increases TTL,
+    # or we save who searched for the group, so people can't increase time for each-other.
     for group in queried_groups:
-        models.QueriedGroup(**group.dict()).save()
+        db_group = models.QueriedGroup.objects(group_name=group.group_name).first()
+        if db_group is None:
+            models.QueriedGroup(**group.dict()).save()
 
 
 def check_exists_queried_group_by_name(group_name: str) -> bool:
