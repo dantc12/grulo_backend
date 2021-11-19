@@ -1,11 +1,12 @@
 import datetime
-from mongoengine import Document
+from mongoengine import Document, EmbeddedDocument, IntField
 from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
     ListField,
-    ObjectIdField
+    ObjectIdField,
+    EmbeddedDocumentField
 )
 
 from app import globals
@@ -35,6 +36,19 @@ class User(Document):
         return str(self.to_dict())
 
 
+class Comment(EmbeddedDocument):
+    text = StringField()
+    user = ObjectIdField(required=True)  # posting user
+    index = IntField(min_value=0, required=True)
+    likes = ListField(ObjectIdField(), default=[])
+
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+
 class Post(Document):
     user = ObjectIdField(required=True)  # posting user
     group = ObjectIdField(required=True)  # the group being posted on
@@ -42,8 +56,8 @@ class Post(Document):
     post_date = DateTimeField(default=datetime.datetime.now)
     last_update = DateTimeField(default=datetime.datetime.now)
 
-    likes = ListField(default=[])
-    comments = ListField(default=[])
+    likes = ListField(ObjectIdField(), default=[])
+    comments = ListField(EmbeddedDocumentField(Comment), default=[])
 
     meta = {"collection": "posts"}
 

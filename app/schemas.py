@@ -63,7 +63,7 @@ class User(UserBase):
 Like = OID
 
 
-class CommentBase(BaseModel):
+class CommentBase(BaseMongoModel):
     text: str
 
 

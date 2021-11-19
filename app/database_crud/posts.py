@@ -17,7 +17,7 @@ def add_comment_to_post(post_id: str, comment: schemas.CommentCreate, user: mode
                                       likes=[],
                                       user=user.id,
                                       **comment.dict())
-    post.comments.append(created_comment.dict())
+    post.comments.append(models.Comment(**created_comment.dict()))
     post.save()
     return post
 
