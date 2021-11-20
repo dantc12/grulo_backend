@@ -6,3 +6,8 @@ class UnSupportedCountry(Exception):
 class UnknownPlaceType(Exception):
     def __init__(self, type: str):
         super().__init__(f"Unknown place type {type}.")
+
+
+class GoogleAPIException(Exception):
+    def __init__(self, status: str, error_msg: str):
+        super().__init__(f"Google API error occurred. status: {status}, error message: {error_msg}.")
