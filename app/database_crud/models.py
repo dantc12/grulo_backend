@@ -1,12 +1,15 @@
 import datetime
-from mongoengine import Document
+from mongoengine import Document, EmbeddedDocument, IntField
 from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
     ListField,
-    ObjectIdField
+    ObjectIdField,
+    EmbeddedDocumentField
 )
+
+from app import globals
 
 
 class User(Document):
@@ -21,10 +24,26 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
+
     groups = ListField(ObjectIdField(), default=[])
     posts = ListField(ObjectIdField(), default=[])
 
+    likes_counter = IntField(default=0)
+
     meta = {"collection": "users"}
+
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+
+class Comment(EmbeddedDocument):
+    text = StringField()
+    user = ObjectIdField(required=True)  # posting user
+    index = IntField(min_value=0, required=True)
+    likes = ListField(ObjectIdField(), default=[])
 
     def to_dict(self) -> dict:
         return self.to_mongo().to_dict()
@@ -40,8 +59,8 @@ class Post(Document):
     post_date = DateTimeField(default=datetime.datetime.now)
     last_update = DateTimeField(default=datetime.datetime.now)
 
-    likes = ListField(default=[])
-    comments = ListField(default=[])
+    likes = ListField(ObjectIdField(), default=[])
+    comments = ListField(EmbeddedDocumentField(Comment), default=[])
 
     meta = {"collection": "posts"}
 
@@ -59,6 +78,28 @@ class Group(Document):
     posts = ListField(ObjectIdField(), default=[])
 
     meta = {"collection": "groups"}
+
+    def to_dict(self) -> dict:
+        return self.to_mongo().to_dict()
+
+    def __str__(self):
+        return str(self.to_dict())
+
+
+class QueriedGroup(Document):
+    created = DateTimeField(default=datetime.datetime.utcnow)
+    group_name = StringField(unique=True, required=True)
+    group_type = StringField(required=True)
+
+    meta = {
+        "indexes": [
+            {
+                "fields": ["created"],
+                "expireAfterSeconds": globals.queried_groups_expiration
+            }
+        ],
+        "collection": "queried_groups"
+    }
 
     def to_dict(self) -> dict:
         return self.to_mongo().to_dict()

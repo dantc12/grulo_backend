@@ -52,18 +52,25 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserEdit(UserCreate):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    password: Optional[str]
+
+
 class User(UserBase):
     id: OID = Field()
     groups: List[OID]
     posts: List[OID]
+    likes_counter: int
 
 
 # ------------------ POSTS ------------------
 
-Like = str
+Like = OID
 
 
-class CommentBase(BaseModel):
+class CommentBase(BaseMongoModel):
     text: str
 
 
@@ -106,7 +113,7 @@ class GroupCreate(GroupBase):
     pass
 
 
-class QueryGroup(GroupBase):
+class QueriedGroup(GroupBase):
     pass
 
 

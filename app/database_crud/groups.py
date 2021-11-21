@@ -34,13 +34,41 @@ def get_all_groups() -> List[models.Group]:
     return list(models.Group.objects())
 
 
-def add_user_to_group(query_group: schemas.QueryGroup, user: models.User) -> models.Group:
+def save_queried_groups(queried_groups: List[schemas.QueriedGroup]) -> None:
+    # TODO
+    # Need to change this. Either searching for an existing group increases its created and increases TTL,
+    # or we save who searched for the group, so people can't increase time for each-other.
+    for group in queried_groups:
+        db_group = models.QueriedGroup.objects(group_name=group.group_name).first()
+        if db_group is None:
+            models.QueriedGroup(**group.dict()).save()
+
+
+def check_exists_queried_group_by_name(group_name: str) -> bool:
+    group = models.QueriedGroup.objects(group_name=group_name).first()
+    return group is not None
+
+
+def add_user_to_group(query_group: schemas.QueriedGroup, user: models.User) -> models.Group:
     try:
         group = get_group_by_name(query_group.group_name)
     except exceptions.GroupNotFound:
-        group = create_group(schemas.GroupCreate(**query_group.dict()))
+        if check_exists_queried_group_by_name(query_group.group_name):
+            group = create_group(schemas.GroupCreate(**query_group.dict()))
+        else:
+            raise exceptions.QueriedGroupNotFound(query_group.group_name)
     if user.id not in group.users:
         user.update(groups=user.groups + [group.id])
         group.users = group.users + [user.id]
+        group.save()
+    return group
+
+
+def leave_group(group_id: str, user: models.User) -> models.Group:
+    group = get_group_by_id(group_id)
+    if user.id in group.users:
+        user.groups.remove(group.id)
+        user.save()
+        group.users.remove(user.id)
         group.save()
     return group
