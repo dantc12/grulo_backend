@@ -22,6 +22,17 @@ async def sign_up(user: schemas.UserCreate) -> schemas.User:
         raise HTTPException(400, str(e))
 
 
+@router.put("/", response_model=schemas.User)
+async def edit_user(user_edits: schemas.UserEdit, user: models.User = Depends(get_current_user)) -> schemas.User:
+    try:
+        if user_edits.password is not None:
+            user_edits.password = get_password_hash(user_edits.password)
+        db_user = users.edit_user(user_edits, user)
+        return db_user
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.get("/me/", response_model=schemas.User)
 async def get_logged_in_user(current_user: models.User = Depends(get_current_user)):
     return current_user

@@ -26,3 +26,9 @@ def create_user(user: schemas.UserCreate) -> models.User:
     db_user = models.User(**user.dict())
     db_user.save()
     return db_user
+
+
+def edit_user(user_edits: schemas.UserEdit, user: models.User) -> models.User:
+    user.update(**user_edits.dict(exclude_unset=True))
+    user = models.User.objects(id=user.id).first()
+    return user

@@ -52,6 +52,12 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserEdit(UserCreate):
+    username: Optional[str]
+    email: Optional[EmailStr]
+    password: Optional[str]
+
+
 class User(UserBase):
     id: OID = Field()
     groups: List[OID]
