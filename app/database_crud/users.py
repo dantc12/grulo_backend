@@ -18,32 +18,58 @@ def get_user_by_id(id: str) -> models.User:
     return user
 
 
-def agree_share_to_user(recipient_user: models.User, sharing_user: models.User) -> models.User:
+def respond_to_share_request(recipient_user: models.User, sharing_user: models.User, accept: bool) -> models.User:
     """
     The recipient user must come from the `requesting_share_users` users.
-    Meaning he requested to share information in the first place.
+    Meaning he requested to share information in the first place, and we are responding to that.
     :param recipient_user: the user we are sharing our information with
     :param sharing_user: the user sharing his information
+    :param accept: says if we want to accept the request or not
     """
     if recipient_user.id not in sharing_user.shared_users and \
             recipient_user.id in sharing_user.requesting_share_users:
-        sharing_user.shared_users.append(recipient_user.id)
-        sharing_user.requesting_share_users.remove(recipient_user.id)
+        if accept:
+            sharing_user.shared_users.append(recipient_user.id)
+            sharing_user.requesting_share_users.remove(recipient_user.id)
+            sharing_user.save()
+            recipient_user.shared_users.append(sharing_user.id)
+            recipient_user.save()
+        else:
+            sharing_user.requesting_share_users.remove(recipient_user.id)
+            sharing_user.save()
+    return sharing_user
+
+
+def unshare_information_with_user(recipient_user: models.User, sharing_user: models.User) -> models.User:
+    """
+    The recipient should currently be sharing information with us, and we want to undo that.
+    :param recipient_user: the user we are sharing our information with
+    :param sharing_user: the user sharing his information
+    """
+    if recipient_user.id in sharing_user.shared_users and sharing_user.id in recipient_user.shared_users:
+        sharing_user.shared_users.remove(recipient_user.id)
         sharing_user.save()
-        recipient_user.shared_users.append(sharing_user.id)
+        recipient_user.shared_users.remove(sharing_user.id)
         recipient_user.save()
     return sharing_user
 
 
-def request_share_from_user(requesting_user: models.User, sharing_user: models.User) -> models.User:
+def request_share_from_user(requesting_user: models.User, sharing_user: models.User, undo: bool) -> models.User:
     """
+    The requesting_user is requesting to share with sharing_user.
     :param requesting_user: the user requesting to share information
     :param sharing_user: the user being requested to share information
+    :param undo: says if we want to undo an existing request
     """
-    if requesting_user.id not in sharing_user.shared_users and \
-            requesting_user.id not in sharing_user.requesting_share_users:
-        sharing_user.requesting_share_users.append(requesting_user.id)
-        sharing_user.save()
+    if requesting_user.id not in sharing_user.shared_users:
+        if not undo:
+            if requesting_user.id not in sharing_user.requesting_share_users:
+                sharing_user.requesting_share_users.append(requesting_user.id)
+                sharing_user.save()
+        else:
+            if requesting_user.id in sharing_user.requesting_share_users:
+                sharing_user.requesting_share_users.remove(requesting_user.id)
+                sharing_user.save()
     return sharing_user
 
 

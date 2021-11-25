@@ -74,22 +74,33 @@ async def get_posts_of_user(id: str):
         raise HTTPException(500, str(e))
 
 
-@router.post("/{id}/request_share", response_model=schemas.User)
-async def request_share_from_user(id: str, current_user: models.User = Depends(get_current_user)):
+@router.post("/{id}/share/request", response_model=schemas.User)
+async def request_share_from_user(id: str, undo: bool = False, current_user: models.User = Depends(get_current_user)):
     try:
         user = users.get_user_by_id(id)
-        return users.request_share_from_user(current_user, user)
+        return users.request_share_from_user(current_user, user, undo)
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
         raise HTTPException(500, str(e))
 
 
-@router.post("/{id}/agree_share", response_model=schemas.User)
-async def agree_share_to_user(id: str, current_user: models.User = Depends(get_current_user)):
+@router.post("/{id}/share/respond_to_request", response_model=schemas.User)
+async def respond_to_share_request(id: str, accept: bool, current_user: models.User = Depends(get_current_user)):
     try:
         user = users.get_user_by_id(id)
-        return users.agree_share_to_user(user, current_user)
+        return users.respond_to_share_request(user, current_user, accept)
+    except exceptions.NotFoundException as e:
+        raise HTTPException(404, str(e))
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
+@router.post("/{id}/share/unshare", response_model=schemas.User)
+async def unshare_information_with_user(id: str, undo: bool = False, current_user: models.User = Depends(get_current_user)):
+    try:
+        user = users.get_user_by_id(id)
+        return users.respond_to_share_request(user, current_user, undo)
     except exceptions.NotFoundException as e:
         raise HTTPException(404, str(e))
     except Exception as e:
