@@ -30,6 +30,9 @@ class User(Document):
 
     likes_counter = IntField(default=0)
 
+    requesting_share_users = ListField(ObjectIdField(), default=[])
+    shared_users = ListField(ObjectIdField(), default=[])
+
     meta = {"collection": "users"}
 
     def to_dict(self) -> dict:

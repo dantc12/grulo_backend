@@ -63,6 +63,8 @@ class User(UserBase):
     groups: List[OID]
     posts: List[OID]
     likes_counter: int
+    shared_users: List[OID]
+    requesting_share_users: List[OID]
 
 
 # ------------------ POSTS ------------------
