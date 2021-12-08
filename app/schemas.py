@@ -1,9 +1,11 @@
 from datetime import datetime
-from typing import Optional, List
+from typing import Optional, List, Union, Dict
 
 from bson import ObjectId
 from bson.errors import InvalidId
 from pydantic import BaseModel, EmailStr, Field, BaseConfig
+
+from .database_crud.notification import NotificationType
 
 
 class OID(str):
@@ -58,11 +60,38 @@ class UserEdit(UserCreate):
     password: Optional[str]
 
 
+class NotificationBase(BaseMongoModel):
+    id: OID = Field()
+    seen: bool
+    created: datetime
+    type: NotificationType
+
+
+class UserNotification(NotificationBase):
+    user: OID = Field()
+
+
+class GroupCountNotification(NotificationBase):
+    count: int
+    Group: OID = Field()
+
+
+class PostCountNotification(NotificationBase):
+    count: int
+    post: OID = Field()
+
+
+Notifications = Union[UserNotification,
+                      GroupCountNotification,
+                      PostCountNotification]
+
+
 class User(UserBase):
     id: OID = Field()
     groups: List[OID]
     posts: List[OID]
     likes_counter: int
+    notifications: Dict[str, Notifications]
     shared_users: List[OID]
     requesting_share_users: List[OID]
 

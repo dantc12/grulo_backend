@@ -96,6 +96,15 @@ async def respond_to_share_request(id: str, accept: bool, current_user: models.U
         raise HTTPException(500, str(e))
 
 
+@router.post("/notifications/mark_as_seen", response_model=schemas.User)
+async def mark_notification_as_seen(notification_id: str, undo: bool = False,
+                                    current_user: models.User = Depends(get_current_user)):
+    try:
+        return users.mark_notification_as_seen(notification_id, current_user, undo)
+    except Exception as e:
+        raise HTTPException(500, str(e))
+
+
 @router.post("/{id}/share/unshare", response_model=schemas.User)
 async def unshare_information_with_user(id: str, current_user: models.User = Depends(get_current_user)):
     try:

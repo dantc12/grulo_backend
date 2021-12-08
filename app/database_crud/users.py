@@ -1,6 +1,7 @@
 from typing import List
 
 from . import models
+from .notification import UserNotification, NotificationType
 from .. import exceptions, schemas
 
 
@@ -65,12 +66,25 @@ def request_share_from_user(requesting_user: models.User, sharing_user: models.U
         if not undo:
             if requesting_user.id not in sharing_user.requesting_share_users:
                 sharing_user.requesting_share_users.append(requesting_user.id)
+                notification = UserNotification(type=NotificationType.FriendRequest,
+                                                user=requesting_user.id)
+                sharing_user.notifications[str(notification.id)] = notification
                 sharing_user.save()
         else:
             if requesting_user.id in sharing_user.requesting_share_users:
                 sharing_user.requesting_share_users.remove(requesting_user.id)
                 sharing_user.save()
     return sharing_user
+
+
+def mark_notification_as_seen(notification_id: str, user: models.User, undo: bool) -> models.User:
+    if notification_id in user.notifications:
+        if not undo:
+            user.notifications[notification_id].seen = True
+        else:
+            user.notifications[notification_id].seen = False
+        user.save()
+    return user
 
 
 def search_users_containing(partial_username: str) -> List[models.User]:

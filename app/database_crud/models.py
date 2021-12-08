@@ -1,13 +1,14 @@
 import datetime
-from mongoengine import Document, EmbeddedDocument, IntField
+
 from mongoengine import (
     DateTimeField,
     StringField,
     EmailField,
     ListField,
     ObjectIdField,
-    EmbeddedDocumentField
+    EmbeddedDocumentField, DictField
 )
+from mongoengine import Document, EmbeddedDocument, IntField
 
 from app import globals
 
@@ -24,6 +25,9 @@ class User(Document):
     phone = StringField()
     gender = StringField()
     bio = StringField()
+
+    # notifications = ListField(EmbeddedDocumentField(Notification), default=[])
+    notifications = DictField()
 
     groups = ListField(ObjectIdField(), default=[])
     posts = ListField(ObjectIdField(), default=[])
